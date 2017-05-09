@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" class="">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>UNIX教程二</title>
+	<link href="./unixtut2.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+	<div id="container">
+	<h1>UNIX教程二 </h1>
+
+	<h2>2.1复制文件</h2>
+	<h3>cp（copy）</h3>
+	<p> <span class="command">cp <i>file1 file2</i></span>是在当前工作目录中创建<strong>file1</strong>的副本并将其命名为<strong>file2</strong>的命令<strong></strong> </p>
+	<p>我们现在要做的是将存储在文件系统可访问区域的文件，使用<span class="command">cp</span>命令将其复制到您的unixstuff目录下。</p>
+	<p>首先，<span class="command">cd</span>到你的<b>unixstuff</b>目录。</p>
+	<p class="cli"> ％cd ~/unixstuff</p>
+	<p> 然后在UNIX提示符下键入 </p>
+	<p class="cli"> ％cp /vol/examples/tutorial/science.txt . </p>
+	<p class="hint">请注意上面命令中最后的点"<b>.</b>"。最后，请记住，在UNIX中，点表示当前目录。</p>
+	<p>上述命令意味着将<strong>science.txt</strong>文件<strong>复制</strong>到当前目录，保持名称相同。</p>
+	<p class="hint">（注意：目录<strong>/vol/examples/tutorial/</strong>是学校的所有人可以读取和复制访问的区域，如果您来自大学以外的地方，可以<a href="http://www.ee.surrey.ac.uk/Teaching/Unix/science.txt">在此处</a>获取该文件的副本 
+	   。使用“文件/保存为..”'从菜单栏将其保存到您的<strong>unixstuff</strong>目录。）</p>
+	<h3>练习2a</h3>
+	<p>通过将<strong>science.txt</strong>文件复制到名为<strong>science.bak的</strong>文件来创建备份<strong></strong> </p>
+
+	<h2>2.2移动文件</h2>
+	<h3>mv（move）</h3>
+	<p><span class="command">mv <i>file1 file2</i></span>  
+	移动（或重命名）<strong>file1</strong>到<strong>file2</strong> </p>
+	<p>要将文件从一个位置移动到另一个位置，请使用mv命令。这具有移动而不是复制文件的效果，所以最终只有一个文件而不是两个文件。</p>
+	<p> 它也可以用于重命名文件，方法是将文件移动到相同的目录，但是给它一个不同的名称。 </p>
+	<p> 我们现在要将文件science.bak移动到你的备份目录。 </p>
+	<p>首先，将当前工作目录更改为unixstuff目录（你能记得吗？）。然后，在<strong>unixstuff</strong>目录中，键入</p>
+	<p class="cli"> ％mv science.bak backups/</p>
+	<p> 输入<strong>ls</strong>和<strong>ls backups</strong>，看看它是否工作。</p>
+
+	<h2>2.3删除文件和目录 </h2>
+	<h3>rm（remove），rmdir（remove directory）</h3>
+	<p>要删除文件，请使用<span class="command">rm</span>命令。例如，我们将创建一个<strong>science.txt</strong>文件的副本，然后删除它。</p>
+	<p>在您的<strong>unixstuff</strong>目录中，键入</p>
+	<p class="cli">％cp science.txt tempfile.txt <br>
+	  ％ls <br>
+	  ％rm tempfile.txt <br>
+	  ％ls</p>
+	<p>您可以使用<span class="command">rmdir</span>命令删除目录（请确保它是空的）。尝试删除<strong>backups</strong>目录。您将无法使用，因为UNIX不会让您删除非空目录。</p>
+	<h3>练习2b</h3>
+	<p>使用<span class="command">mkdir</span>创建一个名为<strong>tempstuff的目录</strong>，然后使用<span class="command">rmdir</span>命令将其删除。<span class="command"></span><span class="command"></span></p>
+
+	<h2>2.4在屏幕上显示文件的内容 </h2>
+	<h3>clear（clear screen）</h3>
+	<p>在开始下一节之前，您可能希望清除终端窗口中之前输入的命令，以便能够清楚地看到以后输入的命令的输出。 </p>
+	<p> 在提示符下，键入 </p>
+	<p class="cli"> ％clear </p>
+	<p> 这将清除所有终端窗口中的所有文本，只留下窗口顶部的％提示符。 </p>
+	<p>&nbsp;</p>
+	<h3>cat（concatenate）</h3>
+	<p>命令cat可用于在屏幕上显示文件的内容。输入：</p>
+	<p class="cli"> ％cat science.txt </p>
+	<p> 如您所见，该文件的长度大于窗口的大小，因此它会滚动过去，使其不可读。 </p>
+	<p>&nbsp;</p>
+	<h3>less</h3>
+	<p>该命令将文件的内容一次一页的显示在屏幕上。输入</p>
+	<p class="cli"> less science.txt </p>
+	<p>如果要查看另一页面，请按[ <b>空格键</b> ]，如果要退出阅读，请键入[ <b>q</b> ]。你可以看到， 
+		 <span class="command">less</span>比<span class="command">cat</span>适合用于长文件。</p>
+	<p>&nbsp;</p>
+	<h3>head</h3>
+	<p><span class="command">head</span>命令将前十行的文件显示在屏幕上。</p>
+	<p> 首先清除屏幕然后键入 </p>
+	<p class="cli"> ％head science.txt </p>
+	<p> 然后输入 </p>
+	<p class="cli"> ％head -5 science.txt </p>
+	<p> -5对head命令有什么影响？ </p>
+	<p>&nbsp;</p>
+	<h3>tail</h3>
+	<p><span class="command">tail</span>命令将最后十行的文件显示在屏幕上。</p>
+	<p> 清除屏幕并键入 </p>
+	<p class="cli"> ％tail science.txt </p>
+	<p> 问题：如何查看文件的最后15行？ </p>
+	<p>&nbsp;</p>
+
+	<h2>2.5搜索文件的内容 </h2>
+	<h3>使用less进行简单搜索</h3>
+	<p>使用<span class="command">less</span>，您可以在文本文件中搜索关键字（或模式）。例如，要在<strong>science.txt</strong>中搜索<b>“science”</b>一词，首先执行</p>
+	<p class="cli"> less science.txt </p>
+	<p>接下来，还是在<span class="command">less</span>命令执行环境中，键入一个正斜杠[ <b>/</b> ]后面跟着要搜索的单词'science'</p>
+	<p class="cli"> /science</p>
+	<p>您可以看到，<span class="command">less</span>查找并突出显示了关键字'science'。键入[ <b>n</b> ]以搜索关键字的下一个出现。</p>
+	<p>&nbsp;</p>
+	<h3>grep（不要问为什么叫grep）</h3>
+	<p><span class="command">grep</span>是许多标准的UNIX实用程序之一。它搜索文件中指定的单词或模式。首先清除屏幕，然后键入</p>
+	<p class="cli"> ％grep science science.txt </p>
+	<p>正如你所看到的，<span class="command">grep</span>已经打印出包含<b>science</b>关键字的每一行。</p>
+	<p> 还是有吗？ </p>
+	<p> 尝试输入 </p>
+	<p class="cli"> ％grep Science science.txt </p>
+	<p><span class="command">grep</span>命令是大小写敏感的; 它区分science与Science。</p>
+	<p> 要忽略对大小写的区分，请使用-i选项，即输入 </p>
+	<p class="cli"> ％grep -i science science.txt </p>
+	<p>要搜索短语或模式，您必须将其括在单引号中。例如搜索<strong>spinning top</strong>，键入</p>
+	<p class="cli"> ％grep -i 'spinning top' science.txt </p>
+	<p> grep的其他选项有： </p>
+	<p> <b>-v</b>显示那些不匹配的行<br>
+	  <b>-n</b>在每个匹配行之前显示行号<br>
+	  <b>-c</b>只打印匹配行的总计数<br>
+	</p>
+	<p>尝试其中一些，看看不同选项执行后的结果。不要忘记，可以一次使用多个选项。例如，统计没有science或Science关键字的行数</p>
+	<p class="cli"> ％grep -ivc science science.txt </p>
+	<p>&nbsp;</p>
+	<h3>wc（word count）</h3>
+	<p><span class="command">wc</span>命令是一个很方便小巧的实用程序。要对<strong>science.txt</strong>做一个字数统计，键入</p>
+	<p class="cli"> ％wc -w science.txt </p>
+	<p> 要找出文件有多少行，请输入 </p>
+	<p class="cli"> ％wc -l science.txt </p>
+
+	<h2>概要 </h2>
+	<table border="1" align="center" cellpadding="5" cellspacing="0">
+	  <tbody><tr>
+		<th>命令</th>
+		<th>含义</th>
+	  </tr>
+	  <tr> 
+		<td class="command">cp <i>file1 file2</i></td>
+		<td>复制file1并命名为file2</td>
+	  </tr>
+	  <tr> 
+		<td class="command">mv <i>file1 file2</i></td>
+		<td>将file1移动或重命名为file2</td>
+	  </tr>
+	  <tr> 
+		<td class="command">rm <i>file</i></td>
+		<td>删除文件</td>
+	  </tr>
+	  <tr> 
+		<td class="command">rmdir <i>directory</i></td>
+		<td>删除目录</td>
+	  </tr>
+	  <tr> 
+		<td class="command">cat <i>file</i></td>
+		<td>显示文件</td>
+	  </tr>
+	  <tr> 
+		<td class="command">less <i>file</i></td>
+		<td>一次显示文件的一页</td>
+	  </tr>
+	  <tr> 
+		<td class="command">head <i>file</i></td>
+		<td>显示文件的前几行</td>
+	  </tr>
+	  <tr> 
+		<td class="command">tail <i>file</i></td>
+		<td>显示文件的最后几行</td>
+	  </tr>
+	  <tr> 
+		<td class="command">grep 'keyword' <i>file</i></td>
+		<td>搜索文件中的'keyword'</td>
+	  </tr>
+	  <tr> 
+		<td class="command">wc <i>file</i></td>
+		<td>统计文件中的行/字/字符数</td>
+	  </tr>
+	</tbody>
+	</table>
+
+	<p align="center" class="navbar"><a href="./unix1.html"><img src="./left.gif" alt="上一教程" width="37" height="39" border="0"></a> 
+	<a href="./index.html"><img src="./home.gif" alt="目录" width="81" height="39" border="0"></a>
+	<a href="./unix3.html"><img src="./right.gif" alt="下一教程" width="37" height="39" border="0"></a></p>
+
+	</div>
+</body>
+</html>
