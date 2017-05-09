@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" class="">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
+	<title>教程一</title> 
+	<link href="./unixtut2.css" rel="stylesheet" type="text/css">
+</head> 
+ 
+<body>
+	<div id="container">
+
+	<h1>UNIX教程一 </h1>
+
+	<h2>1.1列出文件和目录 </h2>
+		<h3>ls（list） </h3>
+		<p>当您首次登录时，您当前的工作目录是您的主目录。您的主目录具有与用户名相同的名称，例如<b>ee91ab</b>，它是保存个人文件和子目录的位置。</p>
+		<p> 要了解您的主目录中的内容，请键入 </p>
+		<p class="cli">％ls </p>
+		<p>该<span class="command">LS</span>命令（小写的L和小写字母S）列出当前工作目录的内容。</p>
+		<p align="center"> <img src="./unix-xterm1.gif" alt="Unix终端 - 运行ls命令" width="491" height="269"></p>
+		<p>您的主目录中可能没有可见的文件，在这种情况下，将返回UNIX提示符。或者，创建帐户时可能已经由系统管理员插入了一些文件。</p>
+		<p><span class="command"></span>实际上，<span class="command">ls</span>不能列出当前目录中的所有文件，只有那些名字不以点（.）开头的文件会被列出。以点开头的文件被称为隐藏文件，通常包含重要的程序配置信息。他们是隐藏的，因为你不应该改变它们，除非你非常熟悉UNIX！</p>
+		<p> 要列出主目录中的所有文件，包括以点开头的文件，请键入 </p>
+		<p class="cli">％ls -a</p>
+		<p>如您所见，<span class="command">ls -a</span>列出了通常隐藏的文件。</p>
+		<p align="center"><img src="./unix-xterm2.gif" alt="Unix终端 - 运行ls命令" width="491" height="269"> </p>
+		<p><span class="command">ls</span>是包含了选项的命令的示例：<b>-a</b>  
+		  是ls命令的一个选项。选项会更改命令的行为。有联机手册页可以告诉您特定的命令可以采用哪些选项，以及每个选项如何修改命令的行为。（见本教程后面部分）</p>
+
+	<h2>1.2创建目录 </h2>
+		<h3>mkdir（make directory) </h3>
+		<p>我们现在将在您的主目录中创建一个子目录来保存您将在本教程中创建和使用的文件。在当前工作目录中创建一个名为unixstuff的子目录:</p>
+		<p class="cli">％mkdir unixstuff </p>
+		<p> 要查看刚刚创建的目录，请键入 </p>
+		<p class="cli">％ls </p>
+
+	<h2>1.3更改当前工作目录&nbsp;</h2>   
+		<h3>cd（change directory）</h3>
+		<p>命令<span class="command">cd <var>directory</var></span>意味着将当前工作目录更改为<i>'directory'</i>。当前工作目录可以被视为您所在的目录，即您目前在文件系统树中的位置。</p>
+		<p> 要更改当前工作目录为刚刚创建的目录，请键入 </p>
+		<p class="cli">％cd unixstuff </p>
+		<p>键入<span class="command">ls</span>以查看内容（应为空）</p>
+		<h3>练习1a</h3>
+		<p>在<strong>unixstuff</strong>目录下创建名为<strong>backups</strong>的目录。 </p>
+
+	<h2>1.4 .目录和..目录</h2>
+	<p>仍然在<strong>unixstuff</strong>目录中，键入</p>
+	<p class="cli"> ％ls -a </p>
+	<p>正如你所看到的，在<strong>unixstuff</strong>目录（和所有其他目录）中，有两个特殊目录（<strong> .</strong>）和（<strong>..</strong>）</p>
+		<h3>当前目录（.） </h3>
+		<p>在UNIX中，（<strong>.</strong>）表示当前目录，因此键入</p>
+		<p class="cli"> ％cd . </p>
+		<p class="hint">注意：cd和点之间有一个空格</p>
+		<p>意味着留在你所在的地方（<strong>unixstuff</strong>目录）。</p>
+		<p>这可能起初似乎不是很有用，但是使用（<strong>.</strong>）作为当前目录的名称将会节省大量的打字，我们将在本教程的后面看到。</p>
+		
+		<h3>父目录（..） </h3>
+		<p>（<strong>..</strong>）表示当前目录的父目录，因此键入 </p>
+		<p class="cli"> ％cd .. </p>
+		<p>将当前目录切换到层次结构的上一级目录（这里将会返回到你的主目录）。现在就试试吧。</p>
+		<p>注意：键入没有参数的<span class="command">cd</span>总是会返回到你的主目录。如果您在文件系统中丢失，这非常有用。</p>
+
+	<h2>1.5路径名 </h2>
+		<h3>pwd（print working directory） </h3>
+				<p>路径名表明一个目录在文件系统中的位置。例如，要查找您的主目录的绝对路径名，请键入 
+		   <span class="command">cd</span>以返回到您的主目录，然后键入</p>
+		<p class="cli"> ％pwd </p>
+		<p> 完整的路径名将如下所示： </p>
+		<p class="output"> <strong>/home/its/ug1/ee51vn</strong></p>
+		<p>这意味着<b>ee51vn</b>（你的主目录）是<b>UG1</b>（组目录）的子目录，同时UG1位于<b>its</b>子目录下，its又位于<b>home</b>子目录下，home位于称为“ <i>/”</i>的顶级根目录下。</p>
+		<p align="center"><img src="./unix-tree.png" alt="Unix文件结构" width="560" height="316"></p>
+		<h3>练习1b</h3>
+		<p>使用命令<span class="command">cd，</span> <span class="command">ls</span>和<span class="command">pwd</span>来探索文件系统。</p>
+		<p>（记住，如果丢失，键入<span class="command">cd</span>返回到您的主目录）</p>
+
+	<h2>1.6有关主目录和路径名的更多信息 </h2>
+		<h3>了解路径名</h3>
+		<p>首先键入cd以返回到您的主目录，然后键入</p>
+		<p class="cli"> ％ls unixstuff</p>
+		<p>列出unixstuff目录的内容。</p>
+		<p>现在输入 </p>
+		<p class="cli"> ％ls backups</p>
+		<p> 你会收到这样的消息 -  </p>
+		<p class="output"> backups：没有这样的文件或目录 </p>
+		<p>原因是<strong>backups</strong>不在您当前的工作目录中。要想对不在当前工作目录（当前所在的目录）的文件（或目录）上使用命令，您必须<span class="command">cd</span>到正确的目录，或指定其完整路径名。要列出backups目录的内容，必须键入</p>
+		<p class="cli"> ％ls unixstuff/backups </p>
+		<p>&nbsp;</p>
+		<h3>~（你的主目录）</h3>
+		<p>主目录，也可以用波浪字符<strong>~</strong>表示。它可用于指定从您的主目录开始的路径。所以</p>
+		<p class="cli"> ％ls ~/unixstuff</p>
+		<p> 将列出您的unixstuff目录的内容，无论您当前在文件系统中的什么位置。 </p>
+		<p> 你认为 </p>
+		<p class="cli"> ％ls ~</p>
+		<p> 会列出什么？ </p>
+		<p> 你认为 </p>
+		<p class="cli"> ％ls ~/.. </p>
+		<p> 会列出什么？ </p>
+
+	<h2>概要 </h2>
+		<table border="1" align="center" cellpadding="5" cellspacing="0">
+		  <tbody>
+		  <tr>
+			<th>命令</th>
+			<th>含义</th>
+		  </tr>
+		  <tr> 
+			<td class="command">LS</td>
+			<td>列出文件和目录</td>
+		  </tr>
+		  <tr> 
+			<td class="command">ls -a</td>
+			<td>列出所有文件和目录</td>
+		  </tr>
+		  <tr> 
+			<td class="command">MKDIR</td>
+			<td>创建一个目录</td>
+		  </tr>
+		  <tr> 
+			<td class="command">cd <i>directory</i></td>
+			<td>进入directory目录</td>
+		  </tr>
+		  <tr> 
+			<td class="command">cd</td>
+			<td>进入主目录</td>
+		  </tr>
+		  <tr> 
+			<td class="command">cd ~</td>
+			<td>进入主目录</td>
+		  </tr>
+		  <tr> 
+			<td class="command">cd ..</td>
+			<td>进入父目录</td>
+		  </tr>
+		  <tr> 
+			<td class="command">PWD</td>
+			<td>显示当前目录的路径</td>
+		  </tr>
+		</tbody>
+		</table>
+
+		<p align="center" class="navbar"><a href="./unix0.html"><img src="./left.gif" alt="上一教程" width="37" height="39" border="0"></a> 
+		<a href="./index.html"><img src="./home.gif" alt="目录" width="81" height="39" border="0"></a>
+		<a href="./unix2.html"><img src="./right.gif" alt="下一教程" width="37" height="39" border="0"></a></p>
+	</div>
+</body>
+</html>
