@@ -1,0 +1,107 @@
+a<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" class="">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>教程四</title>
+	<link href="./unixtut2.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+	<div id="container">
+	<h1>教程四 </h1>
+	<p class="hint">
+		使用Google翻译翻译自: <a href="http://www.ee.surrey.ac.uk/Teaching/Unix/unix4.html">http://www.ee.surrey.ac.uk/Teaching/Unix/unix4.html</a>
+		<br /></p>
+	<hr>
+
+	<h2>4.1通配符</h2>
+		<h3>*通配符 </h3>
+		<p>字符<b class="command">*</b>称为通配符，将匹配文件（或目录）名称中的任意多个（包括0个）字符。例如，在您的<strong>unixstuff</strong>  
+		  目录中，键入</p>
+		<p class="cli"> ％ls list*</p>
+		<p>这将列出名称以<strong>list</strong>开始的当前目录中的所有文件。</p>
+		<p> 尝试输入 </p>
+		<p class="cli"> ％ls *list</p>
+		<p>这将列出名称以<strong>list</strong>结尾的当前目录中的所有文件</p>
+		<h3>？通配符</h3>
+		<p><span class="command">？</span>将匹配一个字符 <br>
+		  所以<b>?ouse</b>会匹配<strong>house</strong>和<strong>mouse</strong>，但不会匹配<strong>grouse</strong>。<br>
+		  尝试输入</p>
+		<p class="cli"> ％ls ?list</p>
+		<p>&nbsp;</p>
+
+	<h2>4.2文件名约定 </h2>
+		<p>我们应该在这里注意到目录只是一种特殊的文件类型。因此，命名文件的规则和约定也适用于目录。</p>
+		<p>在命名文件时，应避免具有特殊含义的字符，如<strong>/*＆％</strong>。另外，避免在名称内使用空格。命名文件的最安全的方法是只使用字母和数字，即字母和数字以及_（下划线）和.（点）。</p>
+			<table border="1" align="center" cellpadding="4" cellspacing="0" bordercolor="#999999">
+			  <tbody><tr>
+				<th scope="col">好的文件名</th>
+				<th scope="col">糟糕的文件名 </th>
+			  </tr>
+			  <tr>
+				<td>project.txt</td>
+				<td>project</td>
+			  </tr>
+			  <tr>
+				<td>my_big_program.c</td>
+				<td>my big program.c </td>
+			  </tr>
+			  <tr>
+				<td>fred_dave.doc</td>
+				<td>fred＆dave.doc </td>
+			  </tr>
+			</tbody>
+			</table>
+		<p>文件名通常以小写字母开头，以文件类型结尾。例如，由C代码组成的所有文件可以以<b>.c</b>结尾命名，例如<b>prog1.c</b>。然后，为了在主目录中列出包含C代码的所有文件，您只需要在该目录中键入<span class="command">ls *.c</span>。</p>
+
+	<h2>4.3获取帮助</h2>
+		<h3>在线手册</h3>
+		<p>在线手册提供了大多数命令的信息。手册页告诉您特定命令可以采用哪些选项，以及每个选项如何影响命令的行为。键入<span class="command">man <i>command</i></span>以阅读特定命令的手册页。</p>
+		<p>例如，要了解有关<b class="command">wc</b>（word count）命令的更多信息，请键入</p>
+		<p class="cli"> ％man wc </p>
+		<p> 另外 </p>
+		<p class="cli"> ％whatis wc </p>
+		<p> 给出命令的一行描述，但省略关于选项等的任何信息。 </p>
+		<h3>apropos</h3>
+		<p>当您不确定命令的确切名称时 </p>
+		<p class="cli"> ％apropos keyword </p>
+		<p>会显示在手册页面中包含关键字的相关命令。例如，尝试输入</p>
+		<p class="cli"> ％apropos copy </p>
+
+	<h2>总结 </h2>
+		<table border="1" align="center" cellpadding="4" cellspacing="0" bordercolor="#999999">
+		<tbody><tr>
+			<th>命令</th>
+			<th>含义</th>
+		  </tr>
+		  <tr> 
+			<td class="command">*</td>
+			<td>匹配任意数量的字符</td>
+		  </tr>
+		  <tr> 
+			<td class="command">？</td>
+			<td>匹配一个字符</td>
+		  </tr>
+		  <tr> 
+			<td class="command">man<var>command</var></td>
+			<td>阅读command命令的在线手册以获取帮助</td>
+		  </tr>
+		  <tr> 
+			<td class="command">whatis <var>command</var></td>
+			<td>获取command命令的简要描述</td>
+		  </tr>
+		  <tr> 
+			<td class="command">apropos <var>keyword</var> </td>
+			<td>查找在手册页中包含keyword关键字的命令</td>
+		  </tr>
+		</tbody>
+		</table>
+
+	<p align="center" class="navbar"><a href="./unix3.html"><img src="./left.gif" alt="上一教程" width="37" height="39" border="0"></a> 
+	<a href="./index.html"><img src="./home.gif" alt="目录" width="81" height="39" border="0"></a>
+	<a href="./unix5.html"><img src="./right.gif" alt="下一教程" width="37" height="39" border="0"></a></p>
+
+	</div>
+</body>
+</html>
