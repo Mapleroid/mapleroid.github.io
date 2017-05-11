@@ -14,64 +14,64 @@
 		<br /></p>
 	<hr>
 
-	<h2>其他有用的UNIX命令 &nbsp; </h2>
+	<h2>其他有用的UNIX命令</h2>
 
-	<h3>配额</h3>
-	<p>所有学生在文件系统上为他们的个人文件分配了一定的磁盘空间，通常约为100Mb。如果你超过你的配额，你将被给予7天以删除多余的文件。</p>
+	<h3>quota</h3>
+	<p>在文件系统上为每个学生分配了一定的磁盘空间，通常约为100Mb，以存放他们的个人文件。如果超过此配额，需要在7天内删除多余的文件。</p>
 	<p> 要检查您当前的配额及其使用的数量，请输入 </p>
-	<p class="cli"> ％quota -v </p>
+	<p class="cli"> %quota -v </p>
 
-	<h3>DF</h3>
-	<p>在<span class="command">DF</span>上的空间命令报告留在文件系统上。例如，要查找文件服务器剩余的空间，请键入</p>
-	<p class="cli"> ％df。 </p>
+	<h3>df</h3>
+	<p><span class="command">df</span>命令显示文件系统的可用空间。例如，键入</p>
+	<p class="cli"> %df . </p>
 
-	<h3>杜</h3>
-	<p>该<span class="command">杜</span>命令输出由每个子目录使用kilobyes的数量。有用的，如果你已经超过配额，你想要找出哪个目录有最多的文件。在您的主目录中，键入</p>
-	<p class="cli"> ％du -s *</p>
-	<p>该<b>-s</b>标志将只显示摘要（总规模）和*表示所有文件和目录。  </p>
+	<h3>du</h3>
+	<p><span class="command">du</span>命令输出每个子目录使用的KB的数量。如果你已经超过配额，并且想要找出哪个目录有最多的文件的时候命令比较有用。在您的主目录中，键入</p>
+	<p class="cli"> %du -s *</p>
+	<p>该<b>-s</b>标志将只显示摘要（总的大小），*表示所有文件和目录。  </p>
 
-	<h3>gzip的</h3>
-	<p>这减少了文件的大小，从而释放了宝贵的磁盘空间。例如，键入</p>
-	<p class="cli"> ％ls -l science.txt </p>
-	<p>并使用<span class="command">ls -l</span>注意文件的大小   。然后压缩science.txt，键入</p>
-	<p class="cli"> ％gzip science.txt </p>
-	<p>这将压缩文件并将其放在名为<b>science.txt.gz</b>的文件中<b></b> </p>
+	<h3>gzip</h3>
+	<p>用于压缩文件的大小，从而释放宝贵的磁盘空间。例如，键入</p>
+	<p class="cli"> %ls -l science.txt </p>
+	<p>并注意使用<span class="command">ls -l</span>列出的文件的大小。然后压缩science.txt，键入</p>
+	<p class="cli"> %gzip science.txt </p>
+	<p>这将压缩文件并将其放在名为<b>science.txt.gz</b>的文件中</p>
 	<p>要查看大小的更改，请再次键入<span class="command">ls -l</span>。</p>
-	<p>要扩展文件，请使用<span class="command">gunzip</span>命令。</p>
-	<p class="cli"> ％gunzip science.txt.gz </p>
+	<p>要解压文件，请使用<span class="command">gunzip</span>命令。</p>
+	<p class="cli"> %gunzip science.txt.gz </p>
 
-	<h3>ZCAT</h3>
+	<h3>zcat</h3>
 	<p><span class="command">zcat</span>将会读取gzip压缩文件，而不需要先解压缩它们。</p>
-	<p class="cli">％zcat science.txt.gz</p>
-	<p>如果您的文本滚动速度太快，请尽可能<span class="command">少地</span>输出输出。</p>
-	<p class="cli">％zcat science.txt.gz | 减</p>
+	<p class="cli">%zcat science.txt.gz</p>
+	<p>如果您的文本滚动速度太快，可以将输出通过管道输出到<span class="command">less</span>命令。</p>
+	<p class="cli">%zcat science.txt.gz | less</p>
 
-	<h3>文件</h3>
-	<p><span class="command">文件</span>根据其包含的数据类型（例如ascii（文本），图片，压缩数据等）对命名文件进行分类。要报告主目录中的所有文件，请键入</p>
-	<p class="cli"> ％档案* </p>
+	<h3>file</h3>
+	<p><span class="command">file</span>根据文件包含的数据类型（例如ascii（文本），图片，压缩数据等）对文件进行分类。要报告主目录中的所有文件，请键入</p>
+	<p class="cli"> %file * </p>
 
-	<h3>DIFF</h3>
-	<p>此命令比较两个文件的内容并显示差异。假设你有一个名为<b>file1的文件</b>，并且编辑它的一部分并将其保存为<b>file2</b>。查看差异类型</p>
-	<p class="cli">％diff file1 file2 </p>
-	<p>与开始的行<b>&lt;</b>表示file1的，而线用开始<b>&gt;</b>表示file2的。</p>
+	<h3>diff</h3>
+	<p>此命令比较两个文件的内容并显示差异。假设你有一个名为<b>file1</b>的文件，并且编辑了它的一部分并将其保存为<b>file2</b>。查看两个文件的差异：</p>
+	<p class="cli">%diff file1 file2 </p>
+	<p><b>&lt;</b>开始的行表示是file1的，而<b>&gt;</b>开始的行表示是file2的。</p>
 
-	<h3>找</h3>
-	<p>这将通过目录搜索具有给定名称，日期，大小或您指定的任何其他属性的文件和目录。这是一个简单的命令，但有许多选项 - 您可以通过键入<span class="command">man find</span>来阅读手册。</p>
-	<p>要搜索扩展名为<b>.txt</b>的所有fies ，从当前目录（。）开始，并通过所有子目录，然后将文件的名称打印到屏幕，键入</p>
-	<p class="cli">％ 找 。-name“* .txt”-print</p>
+	<h3>find</h3>
+	<p>find命令在目录中搜索具有给定名称、日期、大小或您指定的任何其他属性的文件和目录。这是一个简单的命令，但有许多选项 - 您可以通过键入<span class="command">man find</span>来阅读手册。</p>
+	<p>要搜索扩展名为<b>.txt</b>的所有文件，从当前目录（.）开始，并搜索所有子目录，然后将文件的名称打印到屏幕，则可以键入</p>
+	<p class="cli">% find . -name “*.txt” -print</p>
 	<p>要查找大小超过1Mb的文件，并将结果显示为长列表，请键入</p>
-	<p class="cli">％ 找 。-size + 1M -ls  </p>
+	<p class="cli">% find . -size +1M -ls  </p>
 
-	<h3>历史</h3>
+	<h3>history</h3>
 	<p>C shell保存您输入的所有命令的有序列表。每个命令按照输入的顺序给出一个数字。</p>
-	<p class="cli"> ％history（显示命令历史列表）</p>
+	<p class="cli"> %history（显示命令历史列表）</p>
 	<p>如果您使用C shell，可以使用感叹号（<b>！</b>）轻松调用命令。</p>
-	<p class="cli">％!! （召回最后一个命令）</p>
-	<p class="cli">％！-3（召回第三最近的命令） </p>
-	<p class="cli">％！5（在列表中召回第5个命令） </p>
-	<p class="cli">％！grep（从grep开始调用最后一个命令） </p>
-	<p>您可以通过键入来增加历史缓冲区的大小</p>
-	<p class="cli">％set history = 100 </p>
+	<p class="cli">%!! （调用最后一个命令）</p>
+	<p class="cli">%!-3（调用第三最近使用的命令） </p>
+	<p class="cli">%!5（调用在列表中的第5个命令） </p>
+	<p class="cli">%!grep（调用最后一个以grep开头的命令） </p>
+	<p>您可以通过键入下面的命令来增加history命令的缓冲区的大小</p>
+	<p class="cli">%set history = 100 </p>
     <p> </p>
 
 	<p align="center" class="navbar"><a href="./unix5.html"><img src="./left.gif" alt="上一教程" width="37" height="39" border="0"></a> 
