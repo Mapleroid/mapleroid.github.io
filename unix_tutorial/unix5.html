@@ -17,37 +17,37 @@
 	<h2>5.1文件系统安全（访问权限） </h2>
 	<p>在您的<b>unixstuff</b>目录中，键入</p>
 
-	<p class="cli"> ％ls -l（l为长列表！）</p>
+	<p class="cli"> %ls -l（l 代表 long listing!！）</p>
 	<p>您将看到，您现在可以获得有关目录内容的详细信息，类似于下面的示例。 </p>
 	<p> <img src="./file1.gif" alt="文件和目录访问权限"> </p>
 	<p>每个文件（和目录）都具有相关的访问权限，可以通过键入<span class="command">ls -l</span>来找到。此外，<span class="command">ls -lg</span>还提供了哪个组拥有该文件的附加信息（以下示例中为beng95）：</p>
 	<p class="output"> -rwxrw-r-- 1 ee51ab beng95 2450 Sept29 11:52 file1</p>
-	<p>左侧列是由符号d，r，w，x， - 和偶尔s或S组成的10个符号串。如果d存在，则它将位于字符串的左端，并指示一个目录：否则 - 将是字符串的起始符号。 </p>
-	<p>其余9个符号表示权限或访问权限，并被分为三组3。 </p>
+	<p>左侧列是由符号d，r，w，x， - 和偶尔出现的s或S组成的10个符号串。如果d存在，则它将位于字符串的左端，并指示一个目录：否则 - 将是字符串的起始符号。 </p>
+	<p>其余9个符号表示权限或访问权限，并被分为三组。 </p>
 	<ul>
-	  <li> 左组3给出拥有该文件（或目录）的用户的文件权限（上述示例中的ee51ab）; <br>
+	  <li> 左边3个给出拥有该文件（或目录）的用户（上述示例中的ee51ab）的文件权限; <br>
 	  </li>
-	  <li> 中间组给出文件（或目录）所属的组的权限（上述示例中为eebeng95）;<br>
+	  <li> 中间3个给出文件（或目录）所属的组（上述示例中为eebeng95）的权限;<br>
 	  </li>
-	  <li> 最右组授予所有其他人的权限。</li>
+	  <li> 右边3个给出其他用户（除去上边的两者之外的人）的权限。</li>
 	</ul>
 
 	<p>符号r，w等，具体取决于它们是指简单文件还是目录，具有稍微不同的含义。 </p>
 	<h3>对文件的访问权限。</h3>
 	<ul>
-	  <li> r（或 - ）表示读取权限（或其他），即存在或不存在读取和复制文件的权限 <br>
+	  <li> r表示读取权限（或-表示没有读取权限），即存在或不存在读取和复制文件的权限 <br>
 	  </li>
-	  <li> w（或 - ）表示写权限（或其他），即更改文件的权限（或其他） <br>
+	  <li> w表示写权限（或-表示没有写权限），即更改文件的权限 <br>
 	  </li>
-	  <li> x（或 - ）表示执行权限（或其他），即适当时执行文件的权限 </li>
+	  <li> x表示执行权限（或-表示没有执行权限），即执行该文件的权限 </li>
 	</ul>
 	<h3>目录访问权限</h3>
 	<ul>
 	  <li> r允许用户在目录中列出文件; </li>
-	  <li> w意味着用户可以从目录中删除文件或将文件移动到其中; </li>
-	  <li>x表示访问目录中的文件的权限。这意味着您可以读取目录中的文件，只要您具有对各个文件的读取权限。</li>
+	  <li> w意味着用户可以从目录中删除文件或将文件移动到目录中; </li>
+	  <li> x表示访问目录中的文件的权限。这意味着您可以读取目录中的文件，只要您具有对该文件的读取权限。</li>
 	</ul>
-	<p>因此，为了读取文件，您必须对包含该文件的目录具有执行权限，因此在包含该目录的任何目录作为子目录，依此类推。 </p>
+	<p>因此，为了读取文件，您必须对包含该文件的目录具有执行权限，也需要对包含该目录的目录具有执行权限，依此类推。 </p>
 	<h3>一些例子</h3>
 
 	<table border="1" align="center" cellpadding="5" cellspacing="0" bordercolor="#666666">
@@ -57,7 +57,7 @@
 	  </tr>
 	  <tr>
 		<td>-rw -------</td>
-		<td>只有所有者可以读写的文件 - 其他任何人都<br>
+		<td>只有所有者可以读写的文件 - 其他任何用户都<br>
 		  不能读取或写入，也没有人拥有执行权（例如您的<br>
 		  邮箱文件）。</td>
 	  </tr>
@@ -65,7 +65,7 @@
 
 
 	<h2>5.2更改访问权限</h2>
-	<h3>chmod（更改文件模式）</h3>
+	<h3>chmod（changing a file mode）</h3>
 	<p>只有文件的所有者可以使用chmod来更改文件的权限。chmod的选项如下</p>
 	<table border="1" align="center" cellpadding="3" cellspacing="0" bordercolor="#666666">
 	  <tbody><tr> 
@@ -73,120 +73,118 @@
 		<th>含义</th>
 	  </tr>
 	  <tr> 
-		<td><div align="center">ü</div></td>
-		<td>用户</td>
+		<td><div align="center">u</div></td>
+		<td>用户(<strong>u</strong>ser)</td>
 	  </tr>
 	  <tr> 
-		<td><div align="center">G</div></td>
-		<td>组</td>
+		<td><div align="center">g</div></td>
+		<td>组用户(<strong>g</strong>roup)</td>
 	  </tr>
 	  <tr> 
-		<td><div align="center">Ø</div></td>
-		<td>其他</td>
+		<td><div align="center">o</div></td>
+		<td>其他用户(<strong>o</strong>ther)</td>
 	  </tr>
 	  <tr> 
-		<td><div align="center">一个</div></td>
-		<td>所有</td>
+		<td><div align="center">a</div></td>
+		<td>所有(<strong>a</strong>ll)</td>
 	  </tr>
 	  <tr> 
-		<td><div align="center">[R</div></td>
-		<td>读</td>
+		<td><div align="center">r</div></td>
+		<td>读(<strong>r</strong>ead)</td>
 	  </tr>
 	  <tr> 
-		<td><div align="center">w ^</div></td>
-		<td>写（和删除）</td>
+		<td><div align="center">w</div></td>
+		<td>写（<strong>w</strong>rite）和删除</td>
 	  </tr>
 	  <tr> 
-		<td><div align="center">X</div></td>
-		<td>执行（和访问目录） </td>
+		<td><div align="center">x</div></td>
+		<td>执行（e<strong>x</strong>ecute）和访问目录 </td>
 	  </tr>
 	  <tr> 
 		<td><div align="center">+</div></td>
 		<td>添加权限</td>
 	  </tr>
 	  <tr> 
-		<td><div align="center"> - </div></td>
-		<td>带走许可</td>
+		<td><div align="center">-</div></td>
+		<td>减少权限</td>
 	  </tr>
 	</tbody></table>
-	<p>例如，要删除 
-	  对组和其他人的文件大<strong>列表的</strong>读写和执行权限，请键入</p>
+	<p>例如，要删除组用户和其他用户对<strong>biglist</strong>文件的读写和执行权限，请键入</p>
 
-	<p class="cli"> ％chmod go-rwx biglist </p>
-	<p>这将使其他权限不受影响。 </p>
+	<p class="cli"> %chmod go-rwx biglist </p>
+	<p>其他权限不受影响。 </p>
 
-	<p>要给所有的文件大<strong>列表</strong>提供读写权限，</p>
-	<p class="cli"> ％chmod a + rw biglist </p>
+	<p>要给所有人<strong>biglist </strong>文件的读写权限</p>
+	<p class="cli"> %chmod a+rw biglist </p>
 	<h3>练习5a</h3>
-	<p>尝试更改文件<strong>science.txt</strong>和目录<strong>备份</strong>上的访问权限<strong></strong></p>
+	<p>尝试更改文件<strong>science.txt</strong>和目录<strong>backups</strong>的访问权限</p>
 	<p>使用<span class="command">ls -l</span>检查权限是否已更改。</p>
 
-	<h2>5.3流程和工作  </h2>
-	<p>进程是由唯一的PID（进程标识符）识别的执行程序。要查看有关进程的信息，请参阅相关的PID和状态，键入</p>
-
-	<p class="cli"> ％ps </p>
+	<h2>5.3进程和作业  </h2>
+	<p>进程是由唯一的PID（进程标识符）识别的可执行程序。要查看您的进程的PID和状态等信息，请键入</p>
+	<p class="cli"> %ps </p>
 	<p>进程可能在前台，在后台，或被挂起。通常，shell将不会返回UNIX提示，直到当前进程完成执行。</p>
-	<p>一些进程需要很长时间才能运行和保持终端。背景长处理的作用是立即返回UNIX提示符，并且可以在原始进程继续执行时执行其他任务。</p>
+	<p>一些进程需要很长时间才能运行，因此一直占用终端。将需要长时间运行的进程放到后台执行的作用是在终端立即返回UNIX提示符，并且可以在原始进程继续执行其他任务。</p>
 	<h3>运行后台进程</h3>
-	<p>要对进程进行后台处理，请在命令行的末尾键入<strong>＆</strong>。例如，命令<span class="command">sleep</span>等待给定的秒数，然后继续。类型</p>
-	<p class="cli"> ％睡10 </p>
-	<p>这将等待10秒钟，然后返回命令提示符％。在返回命令提示符之前，除了等待之外，您可以执行任何操作。</p>
-	<p> 要在后台运行睡眠，请键入 </p>
-	<p class="cli"> 10％</p>
+	<p>要将进程放到后台处理，可以在命令行的末尾键入<strong>＆</strong>。例如，命令<span class="command">sleep</span>等待给定的秒数，然后继续。键入</p>
+	<p class="cli"> %sleep 10 </p>
+	<p>这将等待10秒钟，然后返回命令提示符%。在返回命令提示符之前，除了等待之外，您不可以执行任何操作。</p>
+	<p> 要在后台运行sleep进程，请键入 </p>
+	<p class="cli">%sleep 10 &</p>
 	<p class="output">[1] 6259 </p>
-	<p>在<strong>与</strong>在后台运行的任务并返回提示直线距离，让你运行其他程序，同时等待一个完成。</p>
-	<p>上述示例中的第一行是用户输入的; 指示作业号和PID的下一行由机器返回。通知用户一个包含在方括号中的作业号（从1编号）连同一个PID，并在后台进程完成时通知用户。背景技术对于需要很长时间才能完成的工作很有用。</p>
-	<h3>背景当前的前台进程</h3>
+	<p><strong>&</strong>在后台运行sleep进程，并直接返回提示符，在等待其执行完成的过程中，可以让你运行其他程序。</p>
+	<p>上述示例中的第一行是用户输入的; 下一行是由机器返回的，包含了作业号和PID信息。作业号（从1编号）包含在方括号中，后跟后台进程的PID，并在后台进程完成时通知用户。后台执行对于需要很长时间才能完成的工作进程很有用。</p>
+	<h3>将当前的前台进程放到后台执行</h3>
 	<p>在提示符下，键入 </p>
-	<p class="cli"> ％睡1000 </p>
-	<p>您可以通过键入<b>^ Z</b>来暂停在前台运行的进程，按住[ <b>Ctrl</b> ]键并键入[ <b>z</b> ]。然后把它放在后台，键入</p>
-	<p class="cli"> ％bg </p>
-	<p class="hint">注意：不要需要用户交互的后台程序，例如vi </p>
+	<p class="cli"> %sleep 1000 </p>
+	<p>您可以通过键入<b>^Z</b>来暂停在前台运行的进程，按住[ <b>Ctrl</b> ]键并键入[ <b>z</b> ]。然后把它放在后台，键入</p>
+	<p class="cli"> %bg </p>
+	<p class="hint">注意：不要将需要用户交互的程序放到后台执行，例如vi </p>
 
-	<h2>5.4列出暂停和后台进程 </h2>
-	<p>当进程运行，后台或暂停时，它将与作业号一起输入到列表中。要检查此列表，请键入</p>
-	<p class="cli"> ％ 工作 </p>
-	<p>作业列表的例子可以是 </p>
-	<p class="output">[1]暂停睡眠1000 <br>
-	  [2]运行netscape <br>
-	  [3]运行matlab</p>
-	<p>要重新启动（前台）挂起的进程，请键入 </p>
-	<p class="cli">％fg％<i>jobnumber</i> </p>
-	<p>例如，要重新启动睡眠1000，请键入 </p>
-	<p class="cli"> ％fg％1 </p>
-	<p>在没有作业编号的情况下键入<span class="command">fg</span>会使最后一个暂停的进程前台。</p>
+	<h2>5.4列出挂起进程和后台进程 </h2>
+	<p>当进程运行，后台运行或挂起时，它将与作业号一起包含到作业列表中。要检查此列表，请键入</p>
+	<p class="cli"> %jobs </p>
+	<p>作业列表的例子可能如下所示 </p>
+	<p class="output">[1]Suspended sleep 1000 <br>
+	  [2]Running netscape <br>
+	  [3]Running matlab</p>
+	<p>要重新启动（前台运行的）挂起的进程，请键入 </p>
+	<p class="cli">%fg %<i>jobnumber</i> </p>
+	<p>例如，要重新启动sleep 1000，请键入 </p>
+	<p class="cli"> %fg %1 </p>
+	<p>在没有作业编号的情况下键入<span class="command">fg</span>会使最后一个暂停的进程在前台执行。</p>
 	  <p> </p>
 
 	<h2>5.5杀死一个进程 </h2>
-	<h3>杀死（终止或信号过程）</h3>
+	<h3>kill（终止或信号通知一个进程）</h3>
 	<p>有时候有必要杀死一个进程（例如，当执行程序处于无限循环中时） </p>
-	<p>要杀死在前台运行的作业，请键入<b>^ C</b>（控制c）。例如，运行</p>
-	<p class="cli">％睡眠100 <br>
-	  ^ C</p>
-	<p> 要杀死已暂停或后台进程，请键入 </p>
-	<p class="cli">％kill％<i>jobnumber</i> </p>
+	<p>要杀死在前台运行的作业，请键入<b>^C</b>（Ctrl+c按键）。例如，运行</p>
+	<p class="cli">%sleep 100 <br>
+	  ^C</p>
+	<p> 要杀死挂起进程或后台进程，请键入 </p>
+	<p class="cli">%kill %<i>jobnumber</i> </p>
 	<p>例如，运行 </p>
-	<p class="cli">％sleep 100 <br>
-	  ％％工作</p>
-	<p> 如果是作业编号4，键入 </p>
-	<p class="cli"> ％kill％4 </p>
-	<p>要检查这是否有效，请再次查看作业列表以查看过程是否已被删除。 </p>
-	<h3>ps（进程状态）</h3>
+	<p class="cli">%sleep 100 &<br>
+	  %%jobs</p>
+	<p> 假设其作业编号为4，键入 </p>
+	<p class="cli"> %kill %4 </p>
+	<p>要检查这是否有效，请再次查看作业列表以查看进程是否已被杀死。 </p>
+	<h3>ps（process status）</h3>
 	<p>或者，可以通过查找进程号（PID）并使用kill <var>PID_number</var>来杀死<var>进程</var></p>
-	<p class="cli">％sleep 1000＆<br>
-	  ％ps</p>
+	<p class="cli">%sleep 1000 &<br>
+	  %ps</p>
 	<p class="output">PID TT S TIME COMMAND <br>
 	  20077 pts / 5 S 0:05 sleep 1000 <br>
 	  21563 pts / 5 T 0:00 netscape <br>
 	  21873 pts / 5 S 0:25 nedit</p>
-	<p>要杀死进程<b>睡眠1000</b>，键入</p>
-	<p class="cli"> 杀死20077 </p>
+	<p>要杀死进程<b>sleep 1000</b>，键入</p>
+	<p class="cli"> kill 20077 </p>
 	<p>然后再次键入<span class="command">ps</span>以查看它是否已从列表中删除。</p>
 	<p>如果进程拒绝被杀死，则使用<strong>-9</strong>选项，即，键入</p>
-	<p class="cli"> ％kill -9 20077 </p>
+	<p class="cli"> %kill -9 20077 </p>
 	<p class="hint">注意：不可能杀死其他用户的进程！</p>
 
-	<h2>概要 </h2>
+	<h2>总结 </h2>
 	<table border="1" align="center" cellpadding="5" cellspacing="0" bordercolor="#666666">
 	<tbody>
 	  <tr>
@@ -198,44 +196,44 @@
 		<td>列出所有文件的访问权限</td>
 	  </tr>
 	  <tr> 
-		<td class="command">chmod [ <var>options</var> ] <var>文件</var></td>
-		<td> 更改命名文件的访问权限</td>
+		<td class="command">chmod [ <var>options</var> ] <var>file</var></td>
+		<td> 更改文件的访问权限</td>
 	  </tr>
 	  <tr> 
-		<td class="command"><var>命令</var>＆</td>
-		<td>在后台运行命令</td>
+		<td class="command"><var>command</var>&</td>
+		<td>在后台运行command命令</td>
 	  </tr>
 	  <tr> 
-		<td class="command">^ C</td>
+		<td class="command">^C</td>
 		<td>杀死在前台运行的作业</td>
 	  </tr>
 	  <tr> 
-		<td class="command">^ Z</td>
-		<td>暂停在前台运行的作业</td>
+		<td class="command">^Z</td>
+		<td>挂起在前台运行的作业</td>
 	  </tr>
 	  <tr> 
-		<td class="command">BG</td>
-		<td>背景暂停的工作</td>
+		<td class="command">bg</td>
+		<td>将挂起的工作放到后台</td>
 	  </tr>
 	  <tr> 
-		<td class="command">工作</td>
-		<td>列出当前工作</td>
+		<td class="command">jobs</td>
+		<td>列出当前的作业</td>
 	  </tr>
 	  <tr> 
-		<td class="command">fg％1</td>
-		<td>前台作业编号1</td>
+		<td class="command">fg %1</td>
+		<td>将编号为1的作业放到前台运行</td>
 	  </tr>
 	  <tr> 
-		<td class="command">杀死％1</td>
-		<td> 杀死工作1号</td>
+		<td class="command">kill %1</td>
+		<td> 杀死编号为1的作业</td>
 	  </tr>
 	  <tr> 
-		<td class="command">PS</td>
-		<td>列出当前进程</td>
+		<td class="command">ps</td>
+		<td>列出当前的进程</td>
 	  </tr>
 	  <tr> 
-		<td class="command">杀26152</td>
-		<td>杀死进程号26152</td>
+		<td class="command">kill 26152</td>
+		<td>杀死进程号为26152的进程</td>
 	  </tr>
 	</tbody>
 	</table>
