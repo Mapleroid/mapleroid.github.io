@@ -14,12 +14,12 @@
 		<br /></p>
 	<hr>
 
-	<h2>7.1编译UNIX软件包 &nbsp; </h2>
-	<p>我们在我们的系统上安装了许多公有领域和商业软件包，所有这些都可供所有用户使用。但是，允许学生在自己的主目录中下载并安装小型软件包，通常只对他们个人有用。</p>
+	<h2>7.1编译UNIX软件包</h2>
+	<p>我们在我们的系统上安装了许多公有领域（不受版权保护）和商业的软件包，所有这些都可提供给所有用户使用。但是，也允许学生在自己的主目录中下载并安装小型软件包，这些软件包通常只对他们个人有用。</p>
 	<p>安装软件需要多个步骤。</p>
 	<ul>
 	  <li> 找到并下载源代码（通常是压缩的）</li>
-	  <li> 打包源代码</li>
+	  <li> 解压源代码</li>
 	  <li> 编译代码 </li>
 	  <li> 安装生成的可执行文件</li>
 	  <li> 设置路径到安装目录 </li>
@@ -27,130 +27,129 @@
 	<p>在上述步骤中，可能最难的是编译阶段。</p>
 
 	<h3>编译源代码</h3>
-	<p>所有高级语言代码必须转换成计算机所理解的形式。例如，C语言源代码被转换成一种称为汇编语言的低级语言。然后将由前一级制作的汇编语言代码转换为目标代码，该代码是计算机直接理解的代码片段。编译程序的最后阶段是将目标代码链接到包含某些内置函数的代码库。这个最后阶段产生一个可执行程序。</p>
+	<p>所有高级语言代码必须转换成计算机所能理解的形式。例如，C语言源代码被转换成一种称为汇编语言的低级语言。然后将由前一级制作的汇编语言代码转换为目标代码，目标代码是计算机可以直接理解的代码片段。编译程序的最后阶段是将目标代码链接到包含某些内置函数的代码库。这个最后阶段产生一个可执行程序。</p>
 	<p>手工执行所有这些步骤是复杂的，超出了普通用户的能力。为程序员和最终用户开发了一些实用程序和工具来简化这些步骤。</p>
 	<h3>make和Makefile</h3>
-	<p>该<span class="command">化妆</span>命令允许程序员来管理大型程序或程序组。通过跟踪整个程序的哪些部分已经被改变来帮助开发大型程序，仅编译自上次编译以来已经改变的程序的那些部分。</p>
-	<p>该<span class="command">化妆</span>程序获取其设定的规则编译从所谓的文本文件<strong>生成文件</strong>驻留在同一目录中的源文件。它包含有关如何编译软件的信息，例如优化级别，是否在可执行文件中包含调试信息。它还包含有关安装完成的编译二进制文件（可执行文件），手册页，数据文件，依赖库文件，配置文件等的信息。</p>
-	<p>某些包需要您手动编辑Makefile来设置最终的安装目录和其​​他任何参数。但是，现在正在使用GNU配置实用程序分发许多软件包。</p>
-	<h3>配置</h3>
-	<p>随着UNIX变体的数量的增加，编写可能运行在所有变体上的程序变得更加困难。开发人员经常无法访问每个系统，并且某些系统的特性从版本更改为版本。GNU配置和构建系统简化了作为源代码分发的程序的构建。所有程序都是使用简单，标准化的两步过程构建的。程序构建器不需要安装任何专用工具来构建程序。</p>
-	<p>该<span class="command">配置</span> shell脚本试图猜测编译过程中使用的各种系统相关的变量的正确值。它使用这些值在包的每个目录中创建一个<strong>Makefile</strong>。</p>
+	<p><span class="command">make</span>命令允许程序员来管理大型程序或程序组。通过跟踪整个程序的哪些部分做了修改来帮助开发大型程序，仅编译自上次编译以来做出修改的那些部分。</p>
+	<p><span class="command">make</span>程序从<strong>Makefile</strong>文件中获取其一系列的编译规则，Makefile文件通常和源文件驻留在同一目录中。它包含有关如何编译软件的信息，例如优化级别，是否在可执行文件中包含调试信息等。它还包含了在何处安装编译后的二进制文件（可执行文件），手册页，数据文件，依赖库文件，配置文件等的信息。</p>
+	<p>某些包需要您手动编辑Makefile来设置最终的安装目录或其​​他的参数。但是，现在许多软件包使用GNU configure实用程序的方式进行分发。</p>
+	<h3>configure实用程序</h3>
+	<p>随着UNIX变体的数量的增加，编写可运行在所有变体上的程序变得更加困难。开发人员经常无法访问每个系统，并且特性也随着系统的版本的变化而变化。GNU configure配置和构建系统简化了作为源代码分发的程序的构建。所有程序都采用了简单、标准化的两步过程构建。程序构建器不需要安装任何专用工具来构建程序。</p>
+	<p><span class="command">configure</span> shell脚本试图猜测编译过程中使用的各种系统相关的变量的正确值。它使用这些值在包的每个目录中创建一个<strong>Makefile</strong>。</p>
 	<p>编译包的最简单的方法是：</p>
 
-	  
 	<ol>
-	  <li> <span class="command">cd</span>到包含程序包的源代码的目录。<br>
+	  <li> <span class="command">cd</span>到包含源代码的目录。<br>
 	  </li>
-	  <li>键入<span class="command">./configure</span>以配置系统的包。<br>
+	  <li>键入<span class="command">./configure</span>执行相应系统的配置。<br>
 	  </li>
 	  <li>键入<span class="command">make</span>来编译包。<br>
 	  </li>
-	  <li>或者，键入<span class="command">make检查</span>以运行该包附带的任何自检。<br>
+	  <li>（可选过程）键入<span class="command">make check</span>以运行该包附带的自检。<br>
 	  </li>
-	  <li>键入<span class="command">make install</span>以安装程序和任何数据文件和文档。<br>
+	  <li>键入<span class="command">make install</span>安装程序、数据文件和文档。<br>
 	  </li>
-	  <li>或者，键入<span class="command">make clean</span>从源代码目录中删除程序二进制文件和对象文件&nbsp; <br>
+	  <li>（可选过程）键入<span class="command">make clean</span>从源代码目录中删除程序编译过程中生成的二进制文件和对象文件<br>
 	  </li>
 	</ol>
-	<p>配置实用程序支持各种选项。通常可以使用<b>--help</b>选项获取特定配置脚本的有趣选项列表。</p>
+	<p>configure实用程序支持各种选项。通常可以使用<b>--help</b>选项获取特定配置脚本的选项列表。</p>
 	  
 	<p>您可能使用的唯一通用选项是<b>--prefix</b>   
 	  和<b>--exec-prefix</b>选项。这些选项用于指定安装目录。 &nbsp; </p>
 	<p>由<b>--prefix</b>选项命名的目录将保存独立于机器的文件，如文档，数据和配置文件。</p>
-	<p>由<b>--exec-prefix</b>选项（通常是<b>--prefix</b>目录的子目录）命名的目录将保存与机器相关的文件，例如可执行文件。</p>
+	<p>由<b>--exec-prefix</b>选项命名的目录（通常是<b>--prefix</b>目录的子目录）将保存与机器相关的文件，例如可执行文件。</p>
 
 	<h2>7.2下载源代码</h2>
-	<p>对于这个例子，我们将下载一个可以在不同测量单位之间进行转换的免费软件。 </p>
+	<p>在这个例子中，我们将下载一个可以在不同测量单位之间进行转换的免费软件。 </p>
 	<p>首先创建一个下载目录&nbsp; </p>
-	<p class="cli"> ％mkdir下载 </p>
-	<p><a href="http://www.ee.surrey.ac.uk/Teaching/Unix/units-1.74.tar.gz">在这里下载软件</a>并将其保存到新的下载目录。</p>
+	<p class="cli"> %mkdir download </p>
+	<p>在<a href="http://www.ee.surrey.ac.uk/Teaching/Unix/units-1.74.tar.gz">这里</a>下载软件并将其保存到新的下载目录。</p>
 
 	<h2>7.3提取源代码 &nbsp; </h2>
-	<p>进入您的<strong>下载</strong>目录并列出内容。&nbsp;</p>
-	<p class="cli">％cd download <br>
-	  ％ls -l</p>
-	<p>你可以看到，文件名以tar.gz完成。tar命令将多个文件和目录转换为单个tar文件。然后使用gzip命令压缩（创建一个tar.gz文件）。</p>
+	<p>进入您的<strong>download</strong>目录并列出内容。&nbsp;</p>
+	<p class="cli">%cd download <br>
+	  %ls -l</p>
+	<p>你可以看到，文件名以tar.gz结尾。tar命令将多个文件和目录转换为单个tar文件。然后使用了gzip命令压缩（创建一个tar.gz文件）。</p>
 	<p>首先使用gunzip命令解压缩文件。这将创建一个.tar文件。&nbsp; </p>
-	<p class="cli"> ％gunzip units-1.74.tar.gz </p>
-	<p>然后提取tar文件的内容。 &nbsp; </p>
-	<p class="cli">％tar -xvf units-1.74.tar </p>
-	<p>再次列出<strong>下载</strong>目录的内容，然后转到<strong>units-1.74</strong>子目录。&nbsp; </p>
-	<p class="cli">％cd units-1.74 </p>
+	<p class="cli"> %gunzip units-1.74.tar.gz </p>
+	<p>然后提取tar文件的内容。 </p>
+	<p class="cli">%tar -xvf units-1.74.tar </p>
+	<p>再次列出<strong>download</strong>目录的内容，然后转到<strong>units-1.74</strong>子目录。</p>
+	<p class="cli">%cd units-1.74 </p>
 
 	<h2>7.4配置和创建Makefile &nbsp; </h2>
 	<p>首先要仔细阅读<strong>README</strong>和<strong>INSTALL</strong>  
-	  文本文件（使用less命令）。这些包含有关如何编译和运行软件的重要信息。</p>
-	<p>单位包使用GNU configure系统编译源代码。我们将需要指定安装目录，因为默认将是您将不具有写入权限的主系统区域。我们需要在您的主目录中创建一个安装目录。 &nbsp; </p>
-	<p class="cli">％mkdir〜/ units174</p>
+	  文本文件（使用less命令）。这些文件包含有关如何编译和运行软件的重要信息。</p>
+	<p>units包使用GNU configure配置和编译源代码。我们需要指定安装目录，因为默认安装目录是您不具有写入权限的主系统区域。我们需要在您的主目录中创建一个安装目录。 &nbsp; </p>
+	<p class="cli">%mkdir ~/units174</p>
 	<p>然后运行configure实用程序设置安装路径。&nbsp;</p>
-	<p class="cli">％./configure --prefix = $ HOME / units174</p>
-	<p class="hint">注意：<strong>$ HOME</strong>变量是环境变量的示例。<strong>$ HOME</strong>的值是您的主<strong>目录</strong>的路径。只需输入<br>
+	<p class="cli">%./configure --prefix = $HOME/units174</p>
+	<p class="hint">注意：<strong>$HOME</strong>变量是环境变量的示例。<strong>$HOME</strong>的值是您的<strong>主目录</strong>的路径。只需输入<br>
 	  <br>
-	  <span class="command">％echo $ HOME</span><br>
+	  <span class="command">%echo $HOME</span><br>
 	  <br> 
 	  即可显示此变量的内容。我们将在后面的章节中更多地了解环境变量。</p>
-	<p>如果<span class="command">配置正确</span>运行，它将创建一个包含所有必需选项的Makefile。如果您愿意，可以查看Makefile（使用<span class="command">less</span>命令），但不要编辑此内容。</p>
+	<p>如果<span class="command">configure</span>正确运行，它将创建一个包含所有必需选项的Makefile。如果您愿意，可以查看Makefile（使用<span class="command">less</span>命令），但不要编辑此内容。</p>
 
-	<h2>7.5建立包装&nbsp; </h2>
+	<h2>7.5编译软件包</h2>
 	<p>现在，您可以通过运行make命令来继续构建软件包。&nbsp; </p>
-	<p class="cli">％做</p>
-	<p>一两分钟（取决于计算机的速度），将创建可执行文件。您可以通过键入来查看所有编译成功的内容</p>
-	<p class="cli">％进行检查</p>
+	<p class="cli">%make</p>
+	<p>一两分钟（取决于计算机的速度）后，完成可执行文件的编译。您可以通过键入下面的命令来查看所有编译成功的内容</p>
+	<p class="cli">%make check</p>
 	<p> 如果一切顺利，您现在可以安装软件包。 &nbsp; </p>
-	<p class="cli">％make install</p>
-	<p>这将把文件安装到您之前创建的<strong>〜/ units174</strong>目录中。</p>
+	<p class="cli">%make install</p>
+	<p>这将把文件安装到您之前创建的<strong>~/units174</strong>目录中。</p>
 
 	<h2>7.6运行软件</h2>
 	<p>您现在可以运行该软件（假设一切正常）。&nbsp; </p>
-	<p class="cli">％cd〜/ units174</p>
-	<p>如果列出单位目录的内容，您将看到一些子目录。</p>
+	<p class="cli">%cd ~/units174</p>
+	<p>如果列出units目录的内容，您将看到一些子目录:</p>
 	<table border="1" align="center" cellpadding="4" cellspacing="0" bordercolor="#666666">
 	  <tbody><tr> 
-		<td>箱子</td>
-		<td>二进制可执行文件</td>
+		<td>bin</td>
+		<td>包含了二进制可执行文件</td>
 	  </tr>
 	  <tr> 
-		<td>信息</td>
-		<td>GNU信息格式文件</td>
+		<td>info</td>
+		<td>包含了GNU info格式的文件</td>
 	  </tr>
 	  <tr> 
-		<td>人</td>
-		<td>手册页</td>
+		<td>man</td>
+		<td>包含了手册页</td>
 	  </tr>
 	  <tr> 
-		<td>分享</td>
-		<td>共享数据文件</td>
+		<td>share</td>
+		<td>包含了共享的数据文件</td>
 	  </tr>
 	</tbody></table>
 	<p>要运行程序，请转到<strong>bin</strong>目录并键入&nbsp;</p>
-	<p class="cli">％ 。/单位 </p>
+	<p class="cli">%./units </p>
 	<p>例如，将6英尺转换成米。&nbsp; </p>
-	<p class="cli">你有：6英尺<br>
-	  你想要：米&nbsp; </p>
+	<p class="cli">You have: 6 feet<br>
+	  You want: metres&nbsp; </p>
 	<p class="output">* 1.8288 </p>
-	<p>如果你得到答案1.8288，恭喜，它的工作。</p>
+	<p>如果你得到答案1.8288，恭喜，程序工作正常。</p>
 	<p>要查看可以转换的单位，请查看共享目录中的数据文件（列表相当全面）。</p>
 	<p>要阅读完整的文档，请转到<strong>info</strong>目录并输入&nbsp; </p>
-	<p class="cli">％info --file = units.info</p>
+	<p class="cli">%info --file=units.info</p>
 
 	<h2>7.7剥离不必要的代码</h2>
 	<p>当开发一个软件时，程序员将调试信息包含在生成的可执行文件中是有用的。这样，如果运行可执行文件时遇到问题，程序员可以将可执行文件加载到调试软件包中，并追踪任何软件错误。</p>
-	<p>这对程序员是有用的，但对用户来说是不必要的。我们可以认为，一旦完成并可用于下载，软件包已经过测试和调试。但是，当我们编译上面的软件时，调试信息仍然被编译到最终的可执行文件中。由于我们将需要这个调试信息是不起眼的，所以我们可以从最终的可执行文件中删除它。其优点之一是可执行程序要小得多，应该稍微快一些。</p>
-	<p>我们要做的是查看二进制文件的前后大小。首先改为<strong>bin</strong>目录下的单位安装目录。&nbsp; </p>
-	<p class="cli">％cd〜/ units174 / bin <br>
-	  ％ls -l</p>
+	<p>这对程序员是有用的，但对用户来说是不必要的。我们可以认为，一旦开发完成并可用于下载，软件包已经过测试和调试。但是，当我们编译上面的软件时，调试信息仍然被编译到最终的可执行文件中。由于我们以后不太可能需要这个调试信息，所以我们可以从最终的可执行文件中删除它。其优点之一是可执行程序要小得多，会稍微快一些。</p>
+	<p>我们要做的是查看前后两个二进制文件的大小。首先切换到units安装目录下的<strong>bin</strong>目录。&nbsp; </p>
+	<p class="cli">%cd ~/units174/bin <br>
+	  %ls -l</p>
 	<p>您可以看到，该文件的大小超过100千字节。您可以使用file命令获取有关文件类型的更多信息。&nbsp; </p>
-	<p class="cli">％文件单位</p>
-	<p class="output">单位：ELF 32位LSB可执行文件，英特尔80386版本1，动态链接（使用共享库），不剥离</p>
+	<p class="cli">%file units</p>
+	<p class="output">units: ELF 32-bit LSB executable, Intel 80386, version 1, dynamically linked (uses shared libs), not stripped</p>
 	<p>要剥离二进制文件中的所有调试和行编号信息，请使用strip命令&nbsp; </p>
-	<p class="cli">％strip units <br>
-	  ％ls -l</p>
+	<p class="cli">%strip units <br>
+	  %ls -l</p>
 	<p>如您所见，该文件现在是36千字节，是其原始大小的三分之一。二进制文件的三分之二是调试代码！</p>
 	<p>再次检查文件信息。&nbsp; </p>
-	<p class="cli">％文件单位</p>
-	<p class="output">单位：ELF 32位LSB可执行文件，英特尔80386版本1，动态链接（使用共享库），剥离</p>
-	<p>有时您可以使用<span class="command">make</span>命令在安装软件包时安装所有二进制文件的预先删除的副本。而不是输入<span class="command">make install</span>，只需键入<span class="command">make install-strip</span></p>
+	<p class="cli">%file units</p>
+	<p class="output">units: ELF 32-bit LSB executable, Intel 80386, version 1, dynamically linked (uses shared libs), stripped</p>
+	<p>有时您可以在安装软件包时使用<span class="command">make</span>安装所有二进制文件的预先剥离调试数据的副本。只需键入<span class="command">make install-strip</span>而不是<span class="command">make install</span>，</p>
 	<p>&nbsp;</p>
 
 	<p align="center" class="navbar"><a href="./unix6.html"><img src="./left.gif" alt="上一教程" width="37" height="39" border="0"></a> 
