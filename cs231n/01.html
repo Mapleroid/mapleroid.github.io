@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+
+<html class="translated-ltr">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width">
+	<meta name="description" content="Course materials and notes for Stanford class CS231n: Convolutional Neural Networks for Visual Recognition.">
+
+	<link rel="canonical" href="http://cs231n.github.io/classification/">
+
+	<!-- Custom CSS -->
+	<link rel="stylesheet" href="main.css">
+
+	<title>CS231n：用于视觉识别的卷积神经网络</title>
+
+</head>
+
+<body>
+	<header class="site-header">
+	  <div class="wrap title-wrap">
+		<a class="site-title" href="http://cs231n.github.io/">CS231n：用于视觉识别的卷积神经网络</a>
+	  </div>
+	</header>
+
+
+    <div class="page-content">
+	<div class="wrap">
+	
+	<div class="post">
+	<article class="post-content">
+	
+	
+	<p> <font style="vertical-align: inherit;"> 这是一个介绍性课程，旨在向计算机视觉领域外的人介绍图像分类问题和数据驱动的方法。目录：</font> </p>
+
+	<ul>
+		<li><a href="http://cs231n.github.io/classification/#intro">介绍图像分类问题，数据驱动的解决方法及流程</a></li>
+		<li><a href="http://cs231n.github.io/classification/#nn">最近邻分类器</a>
+			<ul> <li><a href="http://cs231n.github.io/classification/#knn">k-最近邻</a></li></ul>
+		</li>
+		<li><a href="http://cs231n.github.io/classification/#val">验证集，交叉验证，超参数调整</a></li>
+		<li><a href="http://cs231n.github.io/classification/#procon">最近邻的利弊</a></li>
+		<li><a href="http://cs231n.github.io/classification/#summary">总结</a></li>
+		<li><a href="http://cs231n.github.io/classification/#summaryapply">总结：在实践中应用kNN</a></li>
+		<li><a href="http://cs231n.github.io/classification/#reading">扩展阅读</a></li>
+	</ul>
+
+	<p><a name="intro"></a></p>
+
+	<h2 id="image-classification">图像分类</h2>
+
+	<p><strong>动机</strong>。在本节中，我们将介绍图像分类问题，其任务是从一组分类中为输入的图像分配一个标签。这是计算机视觉中的核心问题之一，尽管其简单，但具有各种各样的实际应用。此外，正如我们将在本课程后面看到的那样，许多其他看似不同的计算机视觉任务（例如物体检测，分割）可以简化为图像分类。</p>
+	
+	<p><strong>示例</strong>。例如在下图中，一个图像分类模型输入了一张图像，并将概率分配给4个标签<em>{cat，dog，hat，mug}</em>。如下图所示，在计算机中图像表示为很大的三维数组。在该示例中，猫的图像是248像素宽，400像素高，并且具有红绿蓝三个颜色通道。因此，其图像由248 x 400 x 3（即297,600）个整数组成，数字范围在0到255之间。我们的任务是将这20多万个数字转换为单个标签，例如<em>“cat”</em>。</p>
+
+	<div class="fig figcenter fighighlight">
+		<img src="classify.png">
+		<div class="figcaption">图像分类的任务是预测给定图像的标签（或标签上的概率分布，如上边所示，表示我们对分类结果的信心）。</div>
+	</div>
+
+	<p><strong>挑战</strong>。尽管识别一个视觉概念（例如猫）的任务对于人来说是微不足道的，但从计算机视觉算法的角度考虑，则涉及很多的挑战。正如下面的挑战列表（实际上比这更多），请记住图像的原始表示是亮度值的三维数组：</p>
+
+	<ul>
+		<li><strong>观察点变化</strong>。对象的单个实例可以相对于相机以多种方式定向。</li>
+		<li><strong>尺度变化</strong>。视觉类通常表现出其大小的变化（现实世界中的大小，不仅仅是它们在图像中的范围）。</li>
+		<li><strong>变形</strong>。许多感兴趣的物体不是刚体，并且可以以极端方式变形。</li>
+		<li><strong>遮挡</strong>。感兴趣的对象可以被遮挡。有时只能看到一小部分物体（少至几个像素）。</li>
+		<li><strong>照明条件</strong>。照明的影响在像素级别上是激烈的。</li>
+		<li><strong>背景杂乱</strong>。感兴趣的物体可能<em>融入</em>其环境中，使其难以识别。</li>
+		<li><strong>类间变化</strong>。感兴趣的类别通常可以比较宽泛，例如<em>椅子</em>。这些对象有许多不同类型，每个对象都有自己的外观。</li>
+	</ul>
+
+	<p>良好的图像分类模型必须对所有这些变化的交叉积不变，同时保持对类间变化的敏感性。</p>
+
+	<div class="fig figcenter fighighlight">
+		<img src="challenges.jpeg">
+		<div class="figcaption"></div>
+	</div>
+
+	<p><strong>数据驱动的方法</strong>。我们如何编写可以将图像分类为不同类别的算法？与编写算法（例如，对数字列表进行排序）不同，人们如何编写用于识别图像中的猫的算法并不明显。因此，我们不会尝试直接在代码中指定每个感兴趣类别的内容，而是采用与孩​​子一样的方法：我们将为计算机提供每个类的许多示例，然后开发学习算法，查看这些示例，并了解每个类的视觉外观。这种方法被称为<em>数据驱动方法</em>，因为它依赖于先在一个标记过的图像的<em>训练数据集</em>上进行累积。以下是此类数据集的示例：</p>
+
+	<div class="fig figcenter fighighlight">
+		<img src="trainset.jpg">
+		<div class="figcaption">四个视觉类别的示例训练集。在实践中，我们可能为每个类别分别拥有数千个类别和数十万个图像。</div>
+	</div>
+
+	<p><strong>图像分类的流程</strong>。我们已经看到图像分类中的任务是采用表示单个图像的像素数组并为其指定标签。我们的完整管道可以正式化如下：</p>
+
+	<ul>
+		<li><strong>输入：</strong>我们的输入由一组<em>N个</em>图像组成，每个图像用<em>K个</em>不同的类中的一个标记。我们将此数据称为<em>训练集</em>。</li>
+		<li><strong>学习：</strong>我们的任务是使用训练集来了解每个类的外观。我们将此步骤称为<em>训练分类器</em>或<em>学习模型</em>。</li>
+		<li><strong>评估：</strong>最后，我们通过要求分类器预测从未见过的一组新图像的标签来评估分类器的质量。然后，我们将比较这些图像的真实标签与分类器预测的标签。直观地说，我们希望很多预测与真正的答案（我们称之为<em>基本事实</em>）相匹配。</li>
+	</ul>
+
+	<p><a name="nn"></a></p>
+
+
+	<h3 id="nearest-neighbor-classifier">最近邻分类器</h3>
+
+	<p>作为我们的第一种方法，我们将开发我们称之为<strong>最近邻分类器</strong>的方法。该分类器与卷积神经网络无关，在实践中很少使用，但它可以让我们了解图像分类问题的基本方法。</p>
+	
+	<p><strong>示例图像分类数据集：CIFAR-10。</strong>一种流行的玩具图像分类数据集是<a href="http://www.cs.toronto.edu/~kriz/cifar.html">CIFAR-10数据集</a>。该数据集由60,000个高32像素的宽图像组成。每个图像都标有10个类别中的一个（例如<em>“飞机，汽车，鸟等”</em>）。这些60,000个图像被划分为50,000个图像的训练集和10,000个图像的测试集。在下图中，您可以看到10个类中每个类的10个随机示例图像：</p>
+
+	<div class="fig figcenter fighighlight">
+		<img src="nn.jpg">
+		<div class="figcaption">左：来自<a href="http://www.cs.toronto.edu/~kriz/cifar.html">CIFAR-10数据集的</a>示例图像。右：第一列显示一些测试图像，然后在每个测试图像旁边根据像素差异显示训练集中的前10个最近邻居。</div>
+	</div>
+
+	<p>现在假设我们获得了50,000张图像的CIFAR-10训练集（每个标签有5,000张图像），我们希望标记剩下的10,000张图像。最近邻分类器取出每张测试图像，将其与每个训练图像进行比较，并预测最接近的训练图像的标签。在上图和右图中，您可以看到10个示例测试图像的此类过程的示例结果。请注意，在10个示例中，只有大约3个检索到同一类的图像，而在其他7个示例中，情况并非如此。例如，在第8行中，最靠近马头的训练图像是红色汽车，可能是由于强烈的黑色背景。结果，在这种情况下，这种马的图像被错误标记为汽车。</p>
+
+	<p>你可能已经注意到我们没有详细说明我们如何比较两个图像（在这种情况下是两个32 x 32 x 3的块）的细节。最简单的可能性方法之一是逐个像素地比较图像并将所有图像差异相加。换句话说，给定两个图像并将它们表示为矢量<script type="math/tex" id="MathJax-Element-1"> I_1, I_2 </script>，一种比较它们的合理选择是<strong>L1距离</strong>：</p>
+
+	<script type="math/tex; mode=display">d_1 (I_1, I_2) = \sum_{p} \left| I^p_1 - I^p_2 \right|</script>
+
+	<p>其中总和是在所有像素上的求和。以下是该过程的可视化：</p>
+
+	<div class="fig figcenter fighighlight">
+		<img src="nneg.jpeg">
+		<div class="figcaption">使用像素的L1距离来比较两个图像的示例（在该示例中为一个颜色通道）。两个图像做像素对像素的相减运算，然后将所有差异加到一个数字上。如果两个图像相同，则结果为零。但如果图像非常不同，结果会很大。</div>
+	</div>
+
+	<p>我们还看看如何在代码中实现分类器。首先，让我们将CIFAR-10数据作为4个数组加载到内存中：训练数据/标签和测试数据/标签。在下面的代码中，<code class="highlighter-rouge">Xtr</code>（大小为50,000 x 32 x 32 x 3）保存训练集中的所有图像，相应的1维数组<code class="highlighter-rouge">Ytr</code>（长度为50,000）保存训练标签（从0到9）：</p>
+
+	<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Xtr</span><span class="p">,</span> <span class="n">Ytr</span><span class="p">,</span> <span class="n">Xte</span><span class="p">,</span> <span class="n">Yte</span> <span class="o">=</span> <span class="n">load_CIFAR10</span><span class="p">(</span><span class="s">'data/cifar10/'</span><span class="p">)</span> <span class="c"># a magic function we provide</span>
+	<span class="c"># flatten out all images to be one-dimensional</span>
+	<span class="n">Xtr_rows</span> <span class="o">=</span> <span class="n">Xtr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">Xtr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">32</span> <span class="o">*</span> <span class="mi">32</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span> <span class="c"># Xtr_rows becomes 50000 x 3072</span>
+	<span class="n">Xte_rows</span> <span class="o">=</span> <span class="n">Xte</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">Xte</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">32</span> <span class="o">*</span> <span class="mi">32</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span> <span class="c"># Xte_rows becomes 10000 x 3072</span>
+	</code></pre></div></div>
+
+	<p>现在我们将所有图像都展开为行，以下是我们如何训练和评估分类器：</p>
+
+	<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">nn</span> <span class="o">=</span> <span class="n">NearestNeighbor</span><span class="p">()</span> <span class="c"># create a Nearest Neighbor classifier class</span>
+	<span class="n">nn</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">Xtr_rows</span><span class="p">,</span> <span class="n">Ytr</span><span class="p">)</span> <span class="c"># train the classifier on the training images and labels</span>
+	<span class="n">Yte_predict</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">Xte_rows</span><span class="p">)</span> <span class="c"># predict labels on the test images</span>
+	<span class="c"># and now print the classification accuracy, which is the average number</span>
+	<span class="c"># of examples that are correctly predicted (i.e. label matches)</span>
+	<span class="k">print</span> <span class="s">'accuracy: </span><span class="si">%</span><span class="s">f'</span> <span class="o">%</span> <span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Yte_predict</span> <span class="o">==</span> <span class="n">Yte</span><span class="p">)</span> <span class="p">)</span>
+	</code></pre></div></div>
+
+	<p>请注意，作为评估标准，通常使用<strong>准确度</strong>，该</font><strong><font style="vertical-align: inherit;">准确度</font></strong><font style="vertical-align: inherit;">表示正确预测结果所占的分数。请注意，我们将构建的所有分类器都满足这一个通用API：它们具有一个从数据和标签中学习的函数<code class="highlighter-rouge">train(X,y)</code>。在内部，类应该构建某种标签模型以及如何从数据中预测它们。然后有一个<code class="highlighter-rouge">predict(X)</code>函数，它接收新数据并预测标签。当然，我们遗漏了事情的本质 - 实际的分类器本身。以下是一个简单的最近邻分类器的实现，其L1距离满足此模板：</p>
+
+	<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span><font></font>
+	<font></font>
+	<span class="k">class</span> <span class="nc">NearestNeighbor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">pass</span><font></font>
+	<font></font>
+	  <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+		<span class="s">""" X is N x D where each row is an example. Y is 1-dimension of size N """</span>
+		<span class="c"># the nearest neighbor classifier simply remembers all the training data</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Xtr</span> <span class="o">=</span> <span class="n">X</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ytr</span> <span class="o">=</span> <span class="n">y</span><font></font>
+	<font></font>
+	  <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+		<span class="s">""" X is N x D where each row is an example we wish to predict label for """</span>
+		<span class="n">num_test</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="c"># lets make sure that the output type matches the input type</span>
+		<span class="n">Ypred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_test</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ytr</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><font></font>
+	<font></font>
+		<span class="c"># loop over all test rows</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">num_test</span><span class="p">):</span>
+		  <span class="c"># find the nearest training image to the i'th test image</span>
+		  <span class="c"># using the L1 distance (sum of absolute value differences)</span>
+		  <span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Xtr</span> <span class="o">-</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,:]),</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+		  <span class="n">min_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span> <span class="c"># get the index with smallest distance</span>
+		  <span class="n">Ypred</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ytr</span><span class="p">[</span><span class="n">min_index</span><span class="p">]</span> <span class="c"># predict the label of the nearest example</span><font></font>
+	<font></font>
+		<span class="k">return</span> <span class="n">Ypred</span>
+	</code></pre></div></div>
+
+	<p>如果运行此代码，您会发现此分类器仅在CIFAR-10上达到<strong>38.6％</strong>的准确度。这比随机猜测更令人印象深刻（因为有10个类别可以提供10％的准确度），但是远远没有人类表现（<a href="http://karpathy.github.io/2011/04/27/manually-classifying-cifar10/">估计大约94％</a>）或接近最先进的卷积神经网络（95％，与人类的准确性相匹配，参见最近在CIFAR-10上举办的Kaggle比赛的<a href="http://www.kaggle.com/c/cifar-10/leaderboard">排行榜</a>）。</p>
+
+	<p><strong>距离的选择。</strong> 
+	计算矢量之间的距离还有许多其他方法。另一个常见的选择是使用<strong>L2距离</strong>，其具有计算两个向量之间的欧氏距离的几何解释。距离采取以下形式：</p>
+
+	<script type="math/tex; mode=display" id="MathJax-Element-3">d_2 (I_1, I_2) = \sqrt{\sum_{p} \left( I^p_1 - I^p_2 \right)^2}</script>
+
+	<p>换句话说，我们将像以前一样计算像素差异，但这次我们将所有这些差异相加并取平方根。在numpy中，使用上面的代码，我们只需要替换一行代码。计算距离的代码：</p>
+
+	<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Xtr</span> <span class="o">-</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,:]),</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">))</span>
+	</code></pre></div></div>
+
+	<p>请注意，我在上面包含了对<code class="highlighter-rouge">np.sqrt</code>的调用，但在实际的最近邻应用程序中，我们可以省略平方根操作，因为平方根函数是<em>单调函数</em>。也就是说，它缩放距离的绝对大小，但它不改变排序，因此最近邻方法有或没有平方根操作是相同的。如果您在CIFAR-10上使用此距离运行最近邻分类器，您将获得<strong>35.4％的</strong>准确度（略低于我们的L1距离结果）。</p>
+
+	<p><strong>L1与L2。</strong>考虑两个指标之间的差异很有意思。特别地，当涉及两个矢量之间的差异时，L2距离比L1距离不适当。也就是说，L2距离将中等分歧变为更大的分歧。L1和L2距离（或等效于一对图像之间差异的L1 / L2范数）是<a href="http://planetmath.org/vectorpnorm">p范数中</a>最常用的特殊情况。</p>
+
+	<p><a name="knn"></a></p>
+
+	<h3 id="k---nearest-neighbor-classifier">k  - 最近邻分类器</h3>
+
+	<p>您可能已经注意到，当我们希望进行预测时，仅使用最近的图像的标签是很奇怪的。实际上，通过使用所谓的<strong>k-最近邻分类器</strong>，人们可以做得更好。这个想法非常简单：我们不是在训练集中找到最近的单个图像，而是找到最前面的<strong>k个</strong>最近的图像，并让它们在测试图像的标签上投票。特别是，当<em>k = 1时</em>，恢复为最近邻分类器。直观地说，较高的<strong>k</strong>值具有平滑效应，使分类器对异常值更具抵抗力：</p>
+
+	<div class="fig figcenter fighighlight">
+	  <img src="knn.jpeg">
+	  <div class="figcaption">最近邻和k最近邻分类器之间差异的一个示例，使用2维点和3个类（红色，蓝色，绿色）。有色区域显示由具有L2距离的分类器引起的<b>决策边界</b>。白色区域显示模糊分类的点（即，类别投票至少与两个类别相关联）。请注意，在最近邻分类器的情况下，异常数据点（例如蓝点云中间的绿点）会产生可能不正确预测的小岛，而5-最近邻分类器会平滑这些不规则性，可能会导致更好的<b>泛化</b>在测试数据上（未显示）。还要注意，5-最近邻分类器图像中的灰色区域是由最近邻居之间的投票关系引起的（例如，2个邻居是红色，接下来的两个邻居是蓝色，最后一个邻居是绿色）。</div>
+	</div>
+
+	<p>在实践中，您几乎总是希望使用k-最近邻分类器。但是<em></em>你应该使用什么值的k？接下来我们转向这个问题。</p>
+
+	<p><a name="val"></a></p>
+
+	<h3 id="validation-sets-for-hyperparameter-tuning">用于超参数调整的验证集</h3>
+
+	<p>k近邻分类器需要设置<em>k</em>。但是哪个数字效果最好？另外，我们看到我们可以使用许多不同的距离函数：L1范数，L2范数，还有许多我们甚至没有考虑的其他选择（例如点积）。这些选择被称为<strong>超参数</strong>，它们经常出现在许多从数据中学习的机器学习算法的设计中。人们应该选择哪些值/设置通常并不明显。</p>
+
+	<p>您可能会建议我们尝试使用许多不同的值，看看哪种方法效果最好。这是一个好主意，这确实是我们将要做的，但必须非常谨慎地完成。特别是，<strong>我们不能使用测试集来调整超参数</strong>。无论何时设计机器学习算法，您都应该将测试集视为一种非常宝贵的资源，理想情况下，直到最后一次才能触及。否则，真正的危险在于您可以调整超参数以在测试集上正常工作，但如果您要部署模型，则可能会发现性能显着降低。在实践中，我们会说你<strong>过度适应</strong>到测试集。另一种看待它的方法是，如果你在测试集上调整超参数，你就可以有效地使用测试集作为训练集，因此你在其上实现的性能对于你部署模型时实际观察到的内容会过于乐观。但是如果你最后只使用一次测试集，那么它仍然是衡量分类器<strong>泛化</strong>的一个很好的代理（我们将在后面的课程中看到更多关于泛化的讨论）。</p>
+
+	<blockquote>
+	  <p>使用测试集评估只能一次，在最后的时候。</p>
+	</blockquote>
+
+	<p>幸运的是，有一种调整超参数的正确方法，它根本不会触及测试集。我们的想法是将我们的训练集分成两部分：一个稍小的训练集，以及我们称之为<strong>验证集</strong>的训练集</font><strong><font style="vertical-align: inherit;"></font></strong><font style="vertical-align: inherit;">。以CIFAR-10为例，我们可以使用49,000个训练图像进行训练，并留出1,000个进行验证。该验证集主要用作伪测试集来调整超参数。</p>
+
+	<p>以下是CIFAR-10的情况：</p>
+
+	<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># assume we have Xtr_rows, Ytr, Xte_rows, Yte as before</span>
+	<span class="c"># recall Xtr_rows is 50,000 x 3072 matrix</span>
+	<span class="n">Xval_rows</span> <span class="o">=</span> <span class="n">Xtr_rows</span><span class="p">[:</span><span class="mi">1000</span><span class="p">,</span> <span class="p">:]</span> <span class="c"># take first 1000 for validation</span>
+	<span class="n">Yval</span> <span class="o">=</span> <span class="n">Ytr</span><span class="p">[:</span><span class="mi">1000</span><span class="p">]</span>
+	<span class="n">Xtr_rows</span> <span class="o">=</span> <span class="n">Xtr_rows</span><span class="p">[</span><span class="mi">1000</span><span class="p">:,</span> <span class="p">:]</span> <span class="c"># keep last 49,000 for train</span>
+	<span class="n">Ytr</span> <span class="o">=</span> <span class="n">Ytr</span><span class="p">[</span><span class="mi">1000</span><span class="p">:]</span><font></font>
+	<font></font>
+	<span class="c"># find hyperparameters that work best on the validation set</span>
+	<span class="n">validation_accuracies</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">]:</span><font></font>
+	  <font></font>
+	  <span class="c"># use a particular value of k and evaluation on validation data</span>
+	  <span class="n">nn</span> <span class="o">=</span> <span class="n">NearestNeighbor</span><span class="p">()</span>
+	  <span class="n">nn</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">Xtr_rows</span><span class="p">,</span> <span class="n">Ytr</span><span class="p">)</span>
+	  <span class="c"># here we assume a modified NearestNeighbor class that can take a k as input</span>
+	  <span class="n">Yval_predict</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">Xval_rows</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="p">)</span>
+	  <span class="n">acc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Yval_predict</span> <span class="o">==</span> <span class="n">Yval</span><span class="p">)</span>
+	  <span class="k">print</span> <span class="s">'accuracy: </span><span class="si">%</span><span class="s">f'</span> <span class="o">%</span> <span class="p">(</span><span class="n">acc</span><span class="p">,)</span><font></font>
+	<font></font>
+	  <span class="c"># keep track of what works on the validation set</span>
+	  <span class="n">validation_accuracies</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">acc</span><span class="p">))</span>
+	</code></pre></div></div>
+
+	<p>在此过程结束时，我们可以绘制一个图表，显示哪个<em>k</em>值最佳。然后我们将坚持使用此值并在实际测试集上进行一次评估。</p>
+
+	<blockquote>
+	  <p>将训练集拆分为训练集和验证集。使用验证集调整所有超参数。最后在测试集上运行一次并报告性能。</p>
+	</blockquote>
+
+	<p><strong>交叉验证</strong>。如果您的训练数据的大小（以及验证数据）可能很小，人们有时会使用更复杂的技术进行超参数调整，称为<strong>交叉验证</strong>。使用我们之前的示例，我们的想法是，不是任意选择前1000个数据点作为验证集和静态训练集，而是可以获得更好且噪声更小的估计</font><em><font style="vertical-align: inherit;">的k</font></em><font style="vertical-align: inherit;">的某个值。<em><font style="vertical-align: inherit;"></font></em>通过迭代不同的验证集并平衡这些验证集的性能来工作。例如，在5折叠交叉验证中，我们将训练数据分成5个相等的折叠，其中4个用于训练，1个用于验证。然后我们将迭代作为验证折叠的一个，评估性能，最后平均不同折叠的性能。</p>
+
+	<div class="fig figleft fighighlight">
+	  <img src="cvplot.png">
+	  <div class="figcaption">参数<b>k</b>的5折叠交叉验证运行的示例。对于<b>k的</b>每个值，我们训练4次并在第5个折叠上进行评估。因此，对于每个<b>k，</b>我们在验证折叠上获得5个准确度（准确度是y轴，每个结果是一个点）。趋势线通过每个<b>k</b>的结果的平均值绘制，误差条表示标准偏差。请注意，在此特定情况下，交叉验证表明约<b>k</b> = 7 的值最适合此特定数据集（对应于图中的峰值）。如果我们使用超过5的折叠，我们可能会看到更平滑（即噪声较小）的曲线。</div>
+	  <div style="clear:both"></div>
+	</div>
+
+	<p><strong>在实践中</strong>。在实践中，人们更喜欢避免交叉验证而支持单个验证拆分，因为交叉验证在计算上可能是昂贵的。人们倾向于使用的分组是训练数据的50％-90％之间用于训练，用剩余的进行验证。但是，这取决于多个因素：例如，如果超参数的数量很大，您可能更喜欢使用更大的验证拆分。如果验证集中的示例数量很少（可能只有几百个左右），则使用交叉验证会更安全。您在实践中可以看到的典型折叠数量是交叉​​验证的3倍，5倍或10倍。</p>
+
+	<div class="fig figcenter fighighlight">
+	  <img src="crossval.jpeg">
+	  <div class="figcaption">常见数据拆分。给出了训练和测试集。训练集分为折叠（例如，这里为5折）。折叠1-4成为训练集。一次折叠（例如折叠5，此处为黄色）表示验证折叠并用于调整超参数。交叉验证更进一步，重复选择哪个折叠是验证折叠，与1-5分开。这将被称为5折叠交叉验证。最后，一旦模型训练完成并确定了所有最好的超参数，就会在测试数据上单次评估模型（红色）。</div>
+	</div>
+
+	<p><a name="procon"></a></p>
+
+	<p><strong>最近邻分类器的优缺点。</strong></p>
+
+	<p>值得考虑最近邻分类器的一些优点和缺点。显然，一个优点是实现和理解起来非常简单。另外，分类器不需时间训练，因为所需要的只是存储并可能索引训练数据。但是，我们在测试时支付计算成本，因为对测试示例进行分类需要与每个训练示例进行比较。这是倒退的，因为在实践中我们经常关心测试时间效率远远超过训练时的效率。事实上，我们将在本课程后期开发的深度神经网络将这种权衡转移到另一个极端：训练非常昂贵，但是一旦完成训练，对新的测试示例进行分类是非常便宜的。这种操作模式在实践中更加令人满意。</p>
+
+	<p>另外，最近邻分类器的计算复杂度是研究的活跃领域，并且存在若干<strong>近似最近邻</strong>（ANN）算法和库，其可以加速数据集中的最近邻查找（例如，<a href="http://www.cs.ubc.ca/research/flann/">FLANN</a>）。这些算法允许人们在检索期间利用其空间/时间复杂度来权衡最近邻检索的正确性，并且通常依赖于涉及构建kdtree或运行k均值算法的预处理/索引阶段。</p>
+
+	<p>在某些设置中，最近邻分类器有时可能是一个不错的选择（特别是如果数据是低维的），但它很少适用于实际的图像分类。一个问题是图像是高维对象（即它们通常包含许多像素），并且高维空间上的距离可能非常违反直觉。下图说明了我们上面开发的基于像素的L2相似度与感知相似度非常不同的观点：</p>
+
+	<div class="fig figcenter fighighlight">
+	  <img src="samenorm.png">
+	  <div class="figcaption">高维数据（尤其是图像）上的基于像素的距离可能非常不直观。原始图像（左）和其旁边的三个其他图像，基于L2像素距离，它们都离它很远。显然，像素距离根本不对应于感知或语义相似性。</div>
+	</div>
+
+	<p>这是另一个可视化，以说服您使用像素差异来比较图像是不够的。我们可以使用一种名为<a href="http://homepage.tudelft.nl/19j49/t-SNE.html">t-SNE</a>的可视化技术来获取CIFAR-10图像并将它们嵌入到二维中，以便最好地保留它们的（局部）成对距离。在此可视化中，根据我们上面开发的L2像素距离，附近显示的图像被认为非常接近：</p>
+
+	<div class="fig figcenter fighighlight">
+	  <img src="pixels_embed_cifar10.jpg">
+	  <div class="figcaption">使用t-SNE以二维嵌入的CIFAR-10图像。基于L2像素距离，认为该图像附近的图像接近。注意背景的强烈影响而不是语义类差异。单击<a href="http://cs231n.github.io/assets/pixels_embed_cifar10_big.jpg">此处</a>查看此可视化的更大版本。</div>
+	</div>
+
+	<p>特别要注意的是，彼此相邻的图像更多地是图像的一般颜色分布，或背景的类型而不是它们的语义标识的函数。例如，可以看到一只狗非常靠近青蛙，因为两者都碰巧在白色背景上。理想情况下，我们希望所有10个类的图像形成自己的聚类，因此相同类的图像彼此相邻，而不管无关的特征和变化（例如背景）。但是，要获得此属性，我们必须超越原始像素。</p>
+
+	<p><a name="summary"></a></p>
+
+
+	<h3 id="summary">摘要</h3>
+
+	<p>综上所述：</p>
+
+	<ul>
+	  <li>我们介绍了<strong>图像分类</strong>的问题，其中我们给出了一组图像，这些图像都用单个类别标记。然后，我们要求为一组新的测试图像预测这些类别，并测量预测的准确性。</li>
+	  <li>我们引入了一个名为<strong>最近邻分类器</strong>的简单分类器</font><strong><font style="vertical-align: inherit;"></font></strong><font style="vertical-align: inherit;">。我们看到有多个超参数（例如k的值，或用于比较示例距离的类型）与此分类器相关联，并且没有明显的选择方法。</li>
+	  <li>我们看到设置这些超参数的正确方法是将训练数据分成两部分：训练集和假测试集，我们称之为<strong>验证集</strong>。我们尝试不同的超参数值，并保留在验证集上获得最佳性能的值。</li>
+	  <li>如果缺乏训练数据，我们讨论了一个称为<strong>交叉验证</strong>的过程，它可以帮助减少噪声，估计哪些超参数最有效。</li>
+	  <li>找到最佳超参数后，我们会固定它们并对实际测试集执行仅一次的<strong>评估</strong>。</li>
+	  <li>我们看到最近邻可以让我们在CIFAR-10上获得大约40％的准确率。它实现起来很简单，但要求我们存储整个训练集，并且在测试图像上进行评估是很昂贵的。</li>
+	  <li>最后，我们看到在原始像素值上使用L1或L2距离是不够的，因为距离与图像的背景和颜色分布的相关性比与其语义内容的相关性更强。</li>
+	</ul>
+
+	<p>在接下来的讲座中，我们将着手解决这些挑战并最终达到提供90％准确度的解决方案，让我们在学习完成后完全丢弃训练集，并且它们将允许我们在不到一毫秒的时间内评估测试图像。</p>
+
+
+	<p><a name="summaryapply"></a></p>
+
+	<h3 id="summary-applying-knn-in-practice">总结：在实践中应用kNN</h3>
+
+	<p>如果您希望在实践中应用kNN（希望不是在图像上，或者可能仅作为基线），请按以下步骤操作：</p>
+
+	<ol>
+	  <li>预处理数据：规范化数据中的要素（例如图像中的一个像素），使其具有零均值和单位方差。我们将在后面的章节中更详细地介绍这一点，并选择不在本节中介绍数据规范化，因为图像中的像素通常是同构的，并且没有表现出大不相同的分布，从而减少了对数据规范化的需求。</li>
+	  <li>如果您的数据非常高维，请考虑使用</font><a href="http://cs229.stanford.edu/notes/cs229-notes10.pdf"><font style="vertical-align: inherit;">降</font></a><font style="vertical-align: inherit;">维技术，如PCA（<a href="http://en.wikipedia.org/wiki/Principal_component_analysis">维基参考</a>，<a href="http://cs229.stanford.edu/notes/cs229-notes10.pdf">CS229ref</a>，<a href="http://www.bigdataexaminer.com/understanding-dimensionality-reduction-principal-component-analysis-and-singular-value-decomposition/">博客参考</a>）或者甚至是<a href="http://scikit-learn.org/stable/modules/random_projection.html">随机投影</a>。</li>
+	  <li>将训练数据随机分成训练/分组。根据经验，70-90％的数据通常用于训练拆分。此设置取决于您拥有多少超参数以及您希望它们具有多大影响力。如果有很多超参数需要估算，那么你应该选择使用更大的验证集以便有效地估算超参数。如果您担心验证数据的大小，最好将训练数据拆分为折叠并执行交叉验证。如果你能负担得起计算预算，那么使用交叉验证总是更安全（越多越好，但更昂贵）。</li>
+	  <li>针对<strong>k</strong>的许多选择（例如越多越好）和跨越不同距离类型（L1和L2是好的候选者），在验证数据（所有折叠，如果进行交叉验证）上训练和评估kNN分类器。</li>
+	  <li>如果您的kNN分类器运行时间过长，请考虑使用近似最近邻库（例如<a href="http://www.cs.ubc.ca/research/flann/">FLANN</a>）来加速检索（以某种精度为代价）。</li>
+	  <li>记下产生最佳结果的超参数。有一个问题是你是否应该使用具有最佳超参数的完整训练集，因为如果你要将验证数据折叠到训练集中，最佳超参数可能会改变（因为数据的大小会更大）。在实践中，不在最终分类器中使用验证数据是更清洁的，并且认为在估计超参数时其将被<em>销毁</em>。在测试集上评估最佳的模型。报告测试集准确度，并将结果作为kNN分类器在你的数据上的性能。</li>
+	</ol>
+
+	<p><a name="reading"></a></p>
+
+	<h4 id="further-reading">进一步阅读</h4>
+
+	<p>以下是您可能感兴趣的一些（可选）链接，供您进一步阅读：</p>
+
+	<ul>
+	  <li>
+		<p><a href="http://homes.cs.washington.edu/~pedrod/papers/cacm12.pdf">关于机器学习的一些有用的事情</a>，特别是第6节是相关的，但整篇论文是一个热烈推荐的阅读。</p>
+	  </li>
+	  <li>
+		<p><a href="http://people.csail.mit.edu/torralba/shortCourseRLOC/index.html">识别和学习对象类别</a>，这是ICCV 2005的一个简短的对象分类过程。</p>
+	  </li>
+	</ul>
+
+  </article>
+
+</div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrap">
+
+    <div class="footer-col-1 column">
+      <ul>
+        
+        <li>
+          <a href="https://github.com/cs231n">
+            <span class="icon github">
+              <svg version="1.1" class="github-icon-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                <path fill-rule="evenodd" clip-rule="evenodd" fill="#C2C2C2" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761
+                c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32
+                c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472
+                c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037
+                C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65
+                c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261
+                c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082
+                c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129
+                c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"></path>
+              </svg>
+            </span>
+            <span class="username">cs231n</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://twitter.com/cs231n">
+            <span class="icon twitter">
+              <svg version="1.1" class="twitter-icon-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                <path fill="#C2C2C2" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809
+                c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27
+                c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767
+                c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206
+                C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271
+                c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469
+                c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"></path>
+              </svg>
+            </span>
+            <span class="username">cs231n</span>
+          </a>
+        </li>
+        <li>
+          <a href="mailto:karpathy@cs.stanford.edu">karpathy@cs.stanford.edu</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+        
+    </div>
+
+    <div class="footer-col-3 column">
+      
+    </div>
+
+  </div>
+
+</footer>
+
+	<!-- mathjax -->
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+</body>
+
+</html>
