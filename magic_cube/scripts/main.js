@@ -28,29 +28,6 @@
 */
 
 $(document).ready( function(){
-	//server = null
-	//server = new CuberServer("OOYBYYOGYGOBYRYRRRYORYBRBBBWWWWWWWWWGRBGOGOOORBYBGRGGG");
-	//console.log(CuberServer.convertFaces("BBBBBBBBBRRRRRRRRRWWWWWWWWWGGGGGGGGGOOOOOOOOOYYYYYYYYY"))
-
 	server = null
-	function loadCmd() {
-		 $.get("?cmd",function(data,status){
-			if ("success"==status)
-			{
-				if(54==data.length){
-					server = new CuberServer(data);
-				}
-				else if (1==data.length)
-				{
-					if ("XxRrMmLlYyUuEeDdZzFfSsBb".indexOf(data)>-1)
-					{
-						server.twist(data);
-					}
-				}
-				setTimeout(loadCmd,100);
-			}
-		});
-	}
-
-	setTimeout(loadCmd,100); 
+	server = new CuberServer("YGBRYWGRRGYYOOWRROOWYWBOGYBGBGYRBOWBWOGBOYOBRWRRBGWGYW");
 });
